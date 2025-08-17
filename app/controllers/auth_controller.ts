@@ -17,7 +17,6 @@ export default class AuthController {
       auth.use('web').login(user)
       return response.redirect('/')
     } catch (error) {
-      console.log(error)
       return inertia.render('auth/login', {
         errors: {
           message: 'Invalid email or password',

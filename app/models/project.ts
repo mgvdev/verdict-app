@@ -1,10 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { column } from '@adonisjs/lucid/orm'
+import UUIDModel from '#models/uuid_model'
 
-export default class Project extends BaseModel {
-  @column({ isPrimary: true })
-  declare id: number
-
+export default class Project extends UUIDModel {
   @column()
   declare name: string
 

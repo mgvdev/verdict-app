@@ -39,7 +39,6 @@ router.use([
   () => import('@adonisjs/session/session_middleware'),
   () => import('@adonisjs/shield/shield_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('#middleware/inertia_project_middleware'),
 ])
 
 /**
@@ -47,6 +46,8 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  userOnboarding: () => import('#middleware/user_onboarding_middleware'),
+  currentProjectLoader: () => import('#middleware/inertia_project_middleware'),
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
 })
