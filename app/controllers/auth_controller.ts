@@ -10,10 +10,11 @@ export default class AuthController {
     return inertia.render('auth/login')
   }
 
-  public async login({ request, response, inertia }: HttpContext) {
+  public async login({ request, response, inertia, auth }: HttpContext) {
     const { email, password } = request.all()
     try {
-      await User.verifyCredentials(email, password)
+      const user = await User.verifyCredentials(email, password)
+      auth.use('web').login(user)
       return response.redirect('/')
     } catch (error) {
       console.log(error)
