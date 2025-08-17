@@ -64,6 +64,7 @@
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^4.0.0",
     "@inertiajs/react": "^2.1.2",
+    "@mgvdev/verdict": "^0.2.0",
     "@vinejs/vine": "^3.0.1",
     "better-sqlite3": "^12.2.0",
     "edge.js": "^6.2.1",
