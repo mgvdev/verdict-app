@@ -1,26 +1,24 @@
 import { useState } from 'react'
 import {
   Icon2fa,
-  IconBellRinging,
-  IconDatabaseImport,
-  IconFingerprint,
-  IconKey,
+  IconApi,
   IconLogout,
+  IconLogs,
   IconReceipt2,
   IconSettings,
+  IconSitemap,
   IconSwitchHorizontal,
-} from '@tabler/icons-react';
+} from '@tabler/icons-react'
 import { Code, Group } from '@mantine/core';
 import classes from './navbar.module.css';
 import { ProjectSelector } from '~/components/layout/projectSelector/projectSelector'
-import {router} from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 
 const data = [
-  { link: '', label: 'Notifications', icon: IconBellRinging },
+  { link: '', label: 'Rules', icon: IconSitemap },
+  { link: '', label: 'Api', icon: IconApi },
+  { link: '', label: 'Activity', icon: IconLogs },
   { link: '', label: 'Billing', icon: IconReceipt2 },
-  { link: '', label: 'Security', icon: IconFingerprint },
-  { link: '', label: 'SSH Keys', icon: IconKey },
-  { link: '', label: 'Databases', icon: IconDatabaseImport },
   { link: '', label: 'Authentication', icon: Icon2fa },
   { link: '', label: 'Other Settings', icon: IconSettings },
 ];
@@ -31,10 +29,13 @@ const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
 }
 
 export function Navbar() {
-  const [active, setActive] = useState('Billing');
+
+  const currentRoute = window.location.pathname
+
+  const [active, setActive] = useState(currentRoute);
 
   const links = data.map((item) => (
-    <a
+    <Link
       className={classes.link}
       data-active={item.label === active || undefined}
       href={item.link}
@@ -46,7 +47,7 @@ export function Navbar() {
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
-    </a>
+    </Link>
   ));
 
   return (
