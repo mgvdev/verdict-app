@@ -1,4 +1,4 @@
-import { MouseEventHandler, useState } from 'react'
+import { useState } from 'react'
 import {
   Icon2fa,
   IconBellRinging,
@@ -25,7 +25,7 @@ const data = [
   { link: '', label: 'Other Settings', icon: IconSettings },
 ];
 
-const logout = (e: MouseEventHandler<HTMLAnchorElement>) => {
+const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
   e.preventDefault()
   router.get('/logout')
 }
