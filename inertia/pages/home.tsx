@@ -1,13 +1,13 @@
 import { Head } from '@inertiajs/react'
 import { Button } from '@mantine/core'
+import { AuthLayout } from '~/layouts/authLatout'
 
 export default function Home() {
   return (
     <>
-      <Head title="Homepage" />
-      <div>
-        <Button variant="filled">Default</Button>
-      </div>
+      <AuthLayout>
+        Test
+      </AuthLayout>
     </>
   )
 }
