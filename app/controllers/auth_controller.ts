@@ -1,7 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { registerValidator } from '#validators/auth/register'
 import User from '#models/user'
-import { passportRule } from '@vinejs/vine/build/src/schema/string/rules.js'
 
 export default class AuthController {
   public async showLogin({ inertia, auth }: HttpContext) {
@@ -11,10 +10,10 @@ export default class AuthController {
     return inertia.render('auth/login')
   }
 
-  public async login({ request, auth, response, inertia }: HttpContext) {
+  public async login({ request, response, inertia }: HttpContext) {
     const { email, password } = request.all()
     try {
-      const user = await User.verifyCredentials(email, password)
+      await User.verifyCredentials(email, password)
       return response.redirect('/')
     } catch (error) {
       console.log(error)
