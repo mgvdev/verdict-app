@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MouseEventHandler, useState } from 'react'
 import {
   Icon2fa,
   IconBellRinging,
@@ -13,6 +13,7 @@ import {
 import { Code, Group } from '@mantine/core';
 import classes from './navbar.module.css';
 import { ProjectSelector } from '~/components/layout/projectSelector/projectSelector'
+import {router} from '@inertiajs/react'
 
 const data = [
   { link: '', label: 'Notifications', icon: IconBellRinging },
@@ -23,6 +24,11 @@ const data = [
   { link: '', label: 'Authentication', icon: Icon2fa },
   { link: '', label: 'Other Settings', icon: IconSettings },
 ];
+
+const logout = (e: MouseEventHandler<HTMLAnchorElement>) => {
+  e.preventDefault()
+  router.get('/logout')
+}
 
 export function Navbar() {
   const [active, setActive] = useState('Billing');
@@ -61,7 +67,7 @@ export function Navbar() {
           <span>Change account</span>
         </a>
 
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+        <a href="#" className={classes.link} onClick={logout}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </a>

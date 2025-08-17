@@ -4,9 +4,8 @@ import type { NextFn } from '@adonisjs/core/types/http'
 export default class InertiaProjectMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
     /**
-     * Middleware logic goes here (before the next call)
+     * Share the current project context
      */
-
     ctx.inertia.share({
       currentProject: {
         id: '0198b85b-ac57-74db-bdaf-e4b41b6e05e3',
