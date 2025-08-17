@@ -12,12 +12,12 @@ export default class extends BaseSchema {
       table.json('rule').notNullable().defaultTo('{}')
 
       table
-        .foreign('project_id')
+        .uuid('project_id')
+        .notNullable()
         .references('id')
         .inTable('projects')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
-        .notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
