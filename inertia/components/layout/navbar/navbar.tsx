@@ -15,12 +15,12 @@ import { ProjectSelector } from '~/components/layout/projectSelector/projectSele
 import { Link, router } from '@inertiajs/react'
 
 const data = [
-  { link: '', label: 'Rules', icon: IconSitemap },
-  { link: '', label: 'Api', icon: IconApi },
-  { link: '', label: 'Activity', icon: IconLogs },
-  { link: '', label: 'Billing', icon: IconReceipt2 },
-  { link: '', label: 'Authentication', icon: Icon2fa },
-  { link: '', label: 'Other Settings', icon: IconSettings },
+  { link: '/rules', label: 'Rules', icon: IconSitemap },
+  { link: '/api_management', label: 'Api', icon: IconApi },
+  { link: '/activity', label: 'Activity', icon: IconLogs },
+  { link: '/billing', label: 'Billing', icon: IconReceipt2 },
+  { link: '/authentication', label: 'Authentication', icon: Icon2fa },
+  { link: '/settings', label: 'Other Settings', icon: IconSettings },
 ];
 
 const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -31,13 +31,14 @@ const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
 export function Navbar() {
 
   const currentRoute = window.location.pathname
+  
 
   const [active, setActive] = useState(currentRoute);
 
   const links = data.map((item) => (
     <Link
       className={classes.link}
-      data-active={item.label === active || undefined}
+      data-active={active.includes(item.link) || undefined}
       href={item.link}
       key={item.label}
       onClick={(event) => {

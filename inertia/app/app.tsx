@@ -7,7 +7,8 @@ import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 import { MantineProvider } from '@mantine/core';
-import { GlobalContextProvider } from '~/contexts'
+import { NuqsAdapter } from 'nuqs/adapters/react'
+
 
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
@@ -28,7 +29,9 @@ createInertiaApp({
 
     createRoot(el).render(
       <MantineProvider>
+        <NuqsAdapter>
           <App {...props}/>
+        </NuqsAdapter>
       </MantineProvider>
     );
 

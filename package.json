@@ -78,6 +78,7 @@
     "dayjs": "^1.11.13",
     "edge.js": "^6.2.1",
     "luxon": "^3.7.1",
+    "nuqs": "^2.4.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "reflect-metadata": "^0.2.2"
