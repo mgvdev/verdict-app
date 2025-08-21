@@ -8,12 +8,9 @@ import {
   ActionIcon,
   Badge,
   Card,
-  Chip,
   Flex,
   Group,
-  Pill,
   Select,
-  Stack,
   Switch,
   TagsInput,
   Text,
@@ -22,8 +19,6 @@ import {
 import { IconTrash } from '@tabler/icons-react'
 import { ValueInput } from '~/components/rules/ruleBuilder/components/valueInput'
 import { InnerConditionEditor } from '~/components/rules/ruleBuilder/components/innerConditionEditor'
-import { MantineCssVariables } from '@mantine/core/lib/core/MantineProvider/MantineCssVariables'
-
 
 export function ConditionRow({
   c,

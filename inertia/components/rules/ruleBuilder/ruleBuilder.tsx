@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import {
-  Badge,
   Button,
   Card,
-  Code,
   Flex,
   Group,
   Kbd,
@@ -16,7 +14,6 @@ import {
 import {
   IconCircleCheck,
   IconCircleX,
-  IconJson,
   IconPlayerPlayFilled,
 } from '@tabler/icons-react'
 
