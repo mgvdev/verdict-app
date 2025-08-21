@@ -3,7 +3,7 @@ import {
   FieldInfo,
   SIMPLE_OPERATOR_OPTIONS,
 } from '~/components/rules/ruleBuilder/types'
-import { Badge, Group, Select, TagsInput } from '@mantine/core'
+import { Group, Select, TagsInput } from '@mantine/core'
 import { ValueInput } from '~/components/rules/ruleBuilder/components/valueInput'
 
 export function InnerConditionEditor({
