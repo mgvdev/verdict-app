@@ -81,7 +81,8 @@
     "nuqs": "^2.4.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "ts-pattern": "^5.8.0"
   },
   "hotHook": {
     "boundaries": [

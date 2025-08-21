@@ -20,6 +20,11 @@ export default class AuthMiddleware {
     } = {}
   ) {
     await ctx.auth.authenticateUsing(options.guards, { loginRoute: this.redirectTo })
+
+    if (ctx.auth.user) {
+      await ctx.auth.user.load('currentProject')
+    }
+
     return next()
   }
 }

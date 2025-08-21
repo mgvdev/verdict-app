@@ -30,7 +30,6 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         <AppShell.Main>
           {children}
         </AppShell.Main>
-
       </AppShell>
     </GlobalContextProvider>
   );

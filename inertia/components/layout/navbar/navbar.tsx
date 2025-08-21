@@ -31,7 +31,7 @@ const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
 export function Navbar() {
 
   const currentRoute = window.location.pathname
-  
+
 
   const [active, setActive] = useState(currentRoute);
 

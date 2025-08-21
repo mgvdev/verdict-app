@@ -1,13 +1,21 @@
 import { Engine, RuleJson, RuleSerializer } from '@mgvdev/verdict'
 import Rule from '#models/rule'
 
+/*
+|--------------------------------------------------------------------------
+| Verdict Service
+|--------------------------------------------------------------------------
+|
+| This service is used to call Verdict library
+|
+*/
 export class VerdictService {
   /**
    * Evaluate a rule against a context
    * @param rule
    * @param context
    */
-  evaluateRule(rule: Rule, context: object) {
+  evaluateRule(rule: Rule, context: object): boolean {
     const engine = new Engine()
     const serializer = new RuleSerializer()
     const deserializedRule = serializer.deserialize(rule.rule as RuleJson)

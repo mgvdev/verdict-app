@@ -19,7 +19,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const { currentProject } = pageProps
 
   return (
-  <ProjectContext.Provider value={{ name: currentProject.name , description: currentProject.description, switchProject: () => {} }}>{children}
+  <ProjectContext.Provider value={{ name: currentProject.name , description: currentProject.description, switchProject: () => {} }}>
     {children}
   </ProjectContext.Provider>
     )

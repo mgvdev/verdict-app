@@ -39,6 +39,7 @@ router
     router
       .group(() => {
         router.get('/', [RulesController, 'index'])
+        router.get('/create', [RulesController, 'create'])
       })
       .prefix('/rules')
   })

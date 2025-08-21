@@ -3,13 +3,12 @@
 
 import '../css/app.css';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 import { MantineProvider } from '@mantine/core';
 import { NuqsAdapter } from 'nuqs/adapters/react'
-
-
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 
