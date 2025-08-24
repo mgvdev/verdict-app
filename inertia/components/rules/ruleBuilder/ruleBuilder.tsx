@@ -129,7 +129,6 @@ export default function VerdictStudio({
           <Tabs.Tab value="context">Context</Tabs.Tab>
           <Tabs.Tab value="build">Build</Tabs.Tab>
           <Tabs.Tab value="test">Test</Tabs.Tab>
-          <Tabs.Tab value="json">JSON</Tabs.Tab>
         </Tabs.List>
 
         {/* CONTEXT TAB */}
@@ -228,23 +227,6 @@ export default function VerdictStudio({
                 )}
               </Card>
             </Stack>
-          </Group>
-        </Tabs.Panel>
-
-        {/* JSON TAB */}
-        <Tabs.Panel value="json" pt="md">
-          <Group align="start" grow>
-            <Card withBorder radius="xs" style={{ flex: 1 }}>
-              <Text fw={600} mb="xs">
-                Serialized Rule (read-only)
-              </Text>
-              <Textarea
-                readOnly
-                minRows={24}
-                autosize
-                value={serialized ? JSON.stringify(serialized, null, 2) : '// no rule yet'}
-              />
-            </Card>
           </Group>
         </Tabs.Panel>
       </Tabs>
