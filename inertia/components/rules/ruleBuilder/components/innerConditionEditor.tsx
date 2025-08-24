@@ -7,10 +7,10 @@ import { Group, Select, TagsInput } from '@mantine/core'
 import { ValueInput } from '~/components/rules/ruleBuilder/components/valueInput'
 
 export function InnerConditionEditor({
-                                inner,
-                                onChange,
-                                itemFields,
-                              }: {
+  inner,
+  onChange,
+  itemFields,
+}: {
   inner: Omit<ConditionNode, 'id' | 'negated'>
   onChange: (c: Omit<ConditionNode, 'id' | 'negated'>) => void
   itemFields: FieldInfo[]
@@ -48,7 +48,6 @@ export function InnerConditionEditor({
           />
         )}
       </Group>
-
     </Group>
   )
 }

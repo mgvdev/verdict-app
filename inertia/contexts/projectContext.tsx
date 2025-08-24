@@ -14,15 +14,20 @@ export const ProjectContext = createContext<ProjectContextType>({
 })
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
-
   const pageProps = usePage<{ currentProject: ProjectContextType }>().props
   const { currentProject } = pageProps
 
   return (
-  <ProjectContext.Provider value={{ name: currentProject.name , description: currentProject.description, switchProject: () => {} }}>
-    {children}
-  </ProjectContext.Provider>
-    )
+    <ProjectContext.Provider
+      value={{
+        name: currentProject.name,
+        description: currentProject.description,
+        switchProject: () => {},
+      }}
+    >
+      {children}
+    </ProjectContext.Provider>
+  )
 }
 
 export const useProject = () => {

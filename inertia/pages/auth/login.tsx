@@ -5,7 +5,7 @@ export default function Login() {
   return (
     <GuestLayout>
       <div className="container">
-          <LoginForm />
+        <LoginForm />
       </div>
     </GuestLayout>
   )

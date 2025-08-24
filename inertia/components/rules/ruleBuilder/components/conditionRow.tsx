@@ -87,7 +87,12 @@ export function ConditionRow({
   }
 
   return (
-    <Card withBorder radius="xs" padding="sm" style={{ background: 'var(--mantine-color-body)', boxShadow: "none" }}>
+    <Card
+      withBorder
+      radius="xs"
+      padding="sm"
+      style={{ background: 'var(--mantine-color-body)', boxShadow: 'none' }}
+    >
       <Group wrap="wrap" align="center" gap="sm">
         <Switch
           size="sm"
@@ -145,35 +150,34 @@ export function ConditionRow({
 
         {isArraySelected && (
           <>
-          <Flex direction="column" gap="xs" style={{ flex: 1 }}>
-            <Group>
-              <Badge color="cyan">Operator</Badge>
-              <Select
+            <Flex direction="column" gap="xs" style={{ flex: 1 }}>
+              <Group>
+                <Badge color="cyan">Operator</Badge>
+                <Select
+                  placeholder="ANY / ALL / NONE"
+                  value={
+                    (c.operator as any) === 'any' ||
+                    (c.operator as any) === 'all' ||
+                    (c.operator as any) === 'none'
+                      ? (c.operator as any)
+                      : 'any'
+                  }
+                  data={ARRAY_OPERATOR_OPTIONS as any}
+                  onChange={(v) => onChange({ ...c, operator: (v as any) ?? 'any' })}
+                />
+              </Group>
 
-                placeholder="ANY / ALL / NONE"
-                value={
-                  (c.operator as any) === 'any' ||
-                  (c.operator as any) === 'all' ||
-                  (c.operator as any) === 'none'
-                    ? (c.operator as any)
-                    : 'any'
-                }
-                data={ARRAY_OPERATOR_OPTIONS as any}
-                onChange={(v) => onChange({ ...c, operator: (v as any) ?? 'any' })}
-              />
-            </Group>
-
-            <Card withBorder radius="xss" padding="xs" style={{ flex: 1, minWidth: 520 }}>
-              <Text size="sm" c="dimmed" mb="xs">
-                Inner condition (relative to each item)
-              </Text>
-              <InnerConditionEditor
-                inner={c.inner ?? ({ kind: 'condition' } as any)}
-                onChange={(inner) => onChange({ ...c, inner })}
-                itemFields={arrayItems[currentArrayPath!] ?? []}
-              />
-            </Card>
-          </Flex>
+              <Card withBorder radius="xss" padding="xs" style={{ flex: 1, minWidth: 520 }}>
+                <Text size="sm" c="dimmed" mb="xs">
+                  Inner condition (relative to each item)
+                </Text>
+                <InnerConditionEditor
+                  inner={c.inner ?? ({ kind: 'condition' } as any)}
+                  onChange={(inner) => onChange({ ...c, inner })}
+                  itemFields={arrayItems[currentArrayPath!] ?? []}
+                />
+              </Card>
+            </Flex>
           </>
         )}
 

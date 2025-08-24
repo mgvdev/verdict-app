@@ -1,4 +1,4 @@
- import { useForm, usePage, router } from '@inertiajs/react'
+import { useForm, usePage, router } from '@inertiajs/react'
 import {
   Anchor,
   Button,
@@ -11,14 +11,12 @@ import {
   TextInput,
 } from '@mantine/core'
 
-
 export function RegisterForm() {
-
   const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    accept_terms: 0
+    accept_terms: 0,
   })
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +28,6 @@ export function RegisterForm() {
     e.preventDefault()
     router.get('/login')
   }
-
 
   const { errors } = usePage().props
 
@@ -88,8 +85,7 @@ export function RegisterForm() {
             </Group>
           </Stack>
         </form>
-
       </Paper>
-      </>
+    </>
   )
 }

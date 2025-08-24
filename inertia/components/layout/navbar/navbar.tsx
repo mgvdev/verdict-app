@@ -9,8 +9,8 @@ import {
   IconSitemap,
   IconSwitchHorizontal,
 } from '@tabler/icons-react'
-import { Code, Group } from '@mantine/core';
-import classes from './navbar.module.css';
+import { Code, Group } from '@mantine/core'
+import classes from './navbar.module.css'
 import { ProjectSelector } from '~/components/layout/projectSelector/projectSelector'
 import { Link, router } from '@inertiajs/react'
 
@@ -21,7 +21,7 @@ const data = [
   { link: '/billing', label: 'Billing', icon: IconReceipt2 },
   { link: '/authentication', label: 'Authentication', icon: Icon2fa },
   { link: '/settings', label: 'Other Settings', icon: IconSettings },
-];
+]
 
 const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
   e.preventDefault()
@@ -29,7 +29,6 @@ const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
 }
 
 export function Navbar() {
-
   const currentRoute = window.location.pathname
 
   const active = useMemo(() => {
@@ -46,13 +45,13 @@ export function Navbar() {
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
     </Link>
-  ));
+  ))
 
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
-          <ProjectSelector/>
+          <ProjectSelector />
           <Code fw={700} className={classes.version}>
             v3.1.2
           </Code>
@@ -72,5 +71,5 @@ export function Navbar() {
         </a>
       </div>
     </nav>
-  );
+  )
 }

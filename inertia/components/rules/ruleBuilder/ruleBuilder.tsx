@@ -1,28 +1,16 @@
 import React, { useMemo, useState } from 'react'
-import {
-  Button,
-  Card,
-  Flex,
-  Group,
-  Kbd,
-  Stack,
-  Tabs,
-  Text,
-  Textarea,
-  Title,
-} from '@mantine/core'
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconPlayerPlayFilled,
-} from '@tabler/icons-react'
+import { Button, Card, Flex, Group, Kbd, Stack, Tabs, Text, Textarea, Title } from '@mantine/core'
+import { IconCircleCheck, IconCircleX, IconPlayerPlayFilled } from '@tabler/icons-react'
 
 // Verdict imports
-import { Engine, RuleSerializer, } from '@mgvdev/verdict'
+import { Engine, RuleSerializer } from '@mgvdev/verdict'
+import { GroupNode } from '~/components/rules/ruleBuilder/types'
 import {
-  GroupNode,
-} from '~/components/rules/ruleBuilder/types'
-import { extractFieldsFromContext, safeJsonParse, toVerdict, } from '~/components/rules/ruleBuilder/utils'
+  extractFieldsFromContext,
+  safeJsonParse,
+  toNodeGroup,
+  toVerdict,
+} from '~/components/rules/ruleBuilder/utils'
 import { GroupCard } from '~/components/rules/ruleBuilder/components/groupCard'
 
 /**
@@ -43,14 +31,13 @@ import { GroupCard } from '~/components/rules/ruleBuilder/components/groupCard'
 let _id = 0
 export const uid = () => `${Date.now().toString(36)}_${(_id++).toString(36)}`
 
-
 export default function VerdictStudio({
   initialContext,
   onChange,
-  rule
+  rule,
 }: {
   initialContext?: any
-  onChange?: (json: any) => void,
+  onChange?: (json: any) => void
   rule?: any
 }) {
   const [contextText, setContextText] = useState<string>(
@@ -74,7 +61,9 @@ export default function VerdictStudio({
   const contextObj = useMemo(() => safeJsonParse(contextText, {}), [contextText])
   const { fields, arrayItems } = useMemo(() => extractFieldsFromContext(contextObj), [contextObj])
 
-  const [root, setRoot] = useState<GroupNode>({ id: uid(), kind: 'group', op: 'and', children: [] })
+  const EMPTY_GROUP: GroupNode = { id: uid(), kind: 'group', op: 'and', children: [] }
+
+  const [root, setRoot] = useState<GroupNode>(rule ? toNodeGroup(rule) : EMPTY_GROUP)
 
   const engine = useMemo(() => new Engine(), [])
   const serializer = useMemo(() => new RuleSerializer(), [])
@@ -169,9 +158,14 @@ export default function VerdictStudio({
 
         {/* Build tabs */}
         <Tabs.Panel value="build" pt="md">
-          <Flex direction="column"  align="start">
+          <Flex direction="column" align="start">
             <Stack gap="md" style={{ flex: 2, width: '100%' }}>
-              <GroupCard groupNode={root} onChange={setRoot} fields={fields} arrayItems={arrayItems} />
+              <GroupCard
+                groupNode={root}
+                onChange={setRoot}
+                fields={fields}
+                arrayItems={arrayItems}
+              />
             </Stack>
           </Flex>
         </Tabs.Panel>

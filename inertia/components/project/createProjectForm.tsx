@@ -6,10 +6,9 @@ export type CreateProjectFormProps = {
 }
 
 export function CreateProjectForm(props: CreateProjectFormProps) {
-
   const form = useForm({
     name: '',
-    description: ''
+    description: '',
   })
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,7 +16,7 @@ export function CreateProjectForm(props: CreateProjectFormProps) {
     if (props.type === 'onboarding') {
       form.post('/onboarding')
     } else {
-    form.post('/projects')
+      form.post('/projects')
     }
   }
 
@@ -32,7 +31,7 @@ export function CreateProjectForm(props: CreateProjectFormProps) {
           <Text size="xs" color="dimmed" p="lg">
             You must create a project to start using Verdict, you can create as many as you want
           </Text>
-          )}
+        )}
 
         <form onSubmit={submit}>
           <Stack>
@@ -41,14 +40,16 @@ export function CreateProjectForm(props: CreateProjectFormProps) {
               placeholder="Project name"
               value={form.data.name}
               onChange={(e) => form.setData('name', e.target.value)}
-              ></TextInput>
+            ></TextInput>
             <TextInput
               label="Description"
               placeholder="Project description"
               value={form.data.description}
               onChange={(e) => form.setData('description', e.target.value)}
             />
-            <Button loading={form.processing} type="submit">Create Project</Button>
+            <Button loading={form.processing} type="submit">
+              Create Project
+            </Button>
           </Stack>
         </form>
       </Paper>

@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { column, hasOne } from '@adonisjs/lucid/orm'
+import type { HasOne } from '@adonisjs/lucid/types/relations'
+import Project from '#models/project'
+import UUIDModel from '#models/uuid_model'
 
-export default class Rule extends BaseModel {
-  @column({ isPrimary: true })
-  declare id: number
-
+export default class Rule extends UUIDModel {
   @column()
   declare name: string
 
@@ -13,6 +13,12 @@ export default class Rule extends BaseModel {
 
   @column()
   declare rule: object
+
+  @column()
+  declare project_id: string
+
+  @hasOne(() => Project, { foreignKey: 'project_id' })
+  declare project: HasOne<typeof Project>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -40,6 +40,8 @@ router
       .group(() => {
         router.get('/', [RulesController, 'index'])
         router.get('/create', [RulesController, 'create'])
+        router.get('/:id', [RulesController, 'show'])
+        router.post('/', [RulesController, 'store'])
       })
       .prefix('/rules')
   })

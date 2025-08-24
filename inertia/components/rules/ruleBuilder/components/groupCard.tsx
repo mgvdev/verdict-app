@@ -52,7 +52,10 @@ export function GroupCard({
   const addGroup = () => {
     const next: GroupNode = {
       ...groupNode,
-      children: [...groupNode.children, { id: uid(), kind: 'group', op: 'and', children: [] } as GroupNode],
+      children: [
+        ...groupNode.children,
+        { id: uid(), kind: 'group', op: 'and', children: [] } as GroupNode,
+      ],
     }
     onChange(next)
   }
@@ -62,7 +65,9 @@ export function GroupCard({
     onChange({ ...groupNode, children: groupNode.children.map((c) => (c.id === id ? next : c)) })
 
   const borderLeftColor = useMemo(() => {
-    return groupNode.op === 'or' ? '2px solid var(--mantine-color-orange-6)' : '2px solid var(--mantine-color-blue-6)'
+    return groupNode.op === 'or'
+      ? '2px solid var(--mantine-color-orange-6)'
+      : '2px solid var(--mantine-color-blue-6)'
   }, [groupNode.op])
 
   return (

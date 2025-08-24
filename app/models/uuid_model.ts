@@ -1,7 +1,7 @@
 import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 
-export default class UUIDModel extends BaseModel{
+export default class UUIDModel extends BaseModel {
   static selfAssignPrimaryKey = true
 
   @column({ isPrimary: true })

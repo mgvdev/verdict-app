@@ -27,7 +27,9 @@ import {
   any as anyOp,
   all as allOp,
   none as noneOp,
+  RuleJson,
 } from '@mgvdev/verdict'
+import { uid } from '~/components/rules/ruleBuilder/ruleBuilder'
 
 /*
  * Checks if a value is a date-like object.
@@ -425,5 +427,157 @@ export function safeJsonParse<T = any>(inputString: string, fallback: T): T {
      * Return the fallback value if parsing fails.
      */
     return fallback
+  }
+}
+export function toNodeGroup(verdictJson: RuleJson): GroupNode {
+  const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+
+  const normalizeOp = (op: string): string => {
+    switch (op) {
+      case 'and':
+      case 'or':
+      case 'not':
+      case 'eq':
+      case 'ne':
+      case 'gt':
+      case 'gte':
+      case 'lt':
+      case 'lte':
+      case 'any':
+      case 'all':
+      case 'none':
+        return op
+      case 'in':
+      case 'In':
+        return 'In'
+      case 'notIn':
+      case 'nin':
+        return 'notIn'
+      default:
+        return op
+    }
+  }
+
+  const toCondition = (json: RuleJson): ConditionNode => {
+    const op = normalizeOp(json.operator)
+
+    // Tableaux: any/all/none => args: [arrayPath, innerRule]
+    if (op === 'any' || op === 'all' || op === 'none') {
+      const [arrayPath, rawInner] = json.args as [string, RuleJson]
+
+      // Support d'un NOT autour de l'inner
+      let innerJson = rawInner
+      let innerNegated = false
+      if (innerJson?.operator === 'not') {
+        innerNegated = true
+        innerJson = (innerJson.args?.[0] as RuleJson) ?? innerJson
+      }
+
+      // L’inner doit être une condition simple (pas un groupe)
+      const innerOp = normalizeOp(innerJson.operator)
+      if (innerOp === 'and' || innerOp === 'or') {
+        // Pas supporté par le builder: on prend le 1er enfant “simple” si dispo
+        const first = (innerJson.args as RuleJson[]).find(
+          (n) => !['and', 'or'].includes(normalizeOp(n.operator))
+        )
+        if (first) innerJson = first
+      }
+
+      const innerCond = toScalarCondition(innerJson)
+      if (innerNegated) innerCond.negated = !innerCond.negated
+
+      // On enlève id/kind dans inner (le builder les rajoute côté toVerdict)
+      const { id: _id, kind: _kind, ...innerNoMeta } = innerCond as any
+
+      return {
+        id: genId(),
+        kind: 'condition',
+        operator: op as any,
+        arrayPath: String(arrayPath),
+        inner: innerNoMeta,
+        negated: false,
+      }
+    }
+
+    // Comparateurs & (not)in
+    return toScalarCondition(json)
+  }
+
+  const toScalarCondition = (json: RuleJson): ConditionNode => {
+    const op = normalizeOp(json.operator)
+    const [field, rawValue] = json.args as [string, unknown]
+
+    // pour In/notIn, on s'assure d’un tableau si le JSON ne l’était pas
+    const value =
+      op === 'In' || op === 'notIn' ? (Array.isArray(rawValue) ? rawValue : [rawValue]) : rawValue
+
+    return {
+      id: genId(),
+      kind: 'condition',
+      operator: op as any,
+      field: typeof field === 'string' ? field : String(field),
+      value,
+      negated: false,
+    }
+  }
+
+  const toNode = (json: RuleJson): NodeModel => {
+    const op = normalizeOp(json.operator)
+
+    if (op === 'and' || op === 'or') {
+      const children = (json.args as RuleJson[]).map(toNode) as NodeModel[]
+      return {
+        id: genId(),
+        kind: 'group',
+        op: op as 'and' | 'or',
+        children,
+      }
+    }
+
+    if (op === 'not') {
+      const inner = json.args?.[0] as RuleJson
+      if (!inner) {
+        // NOT vide => condition neutre négative pour ne pas crasher l’UI
+        return {
+          id: genId(),
+          kind: 'condition',
+          operator: 'eq',
+          field: '',
+          value: null,
+          negated: true,
+        }
+      }
+
+      const innerOp = normalizeOp(inner.operator)
+      if (innerOp === 'and' || innerOp === 'or') {
+        // De Morgan: not(and(...)) => or(not a, not b, ...)
+        const flipped: 'and' | 'or' = innerOp === 'and' ? 'or' : 'and'
+        const children = (inner.args as RuleJson[]).map((c) =>
+          toNode({ operator: 'not', args: [c] })
+        )
+        return {
+          id: genId(),
+          kind: 'group',
+          op: flipped,
+          children: children as GroupNode['children'],
+        }
+      }
+
+      const cond = toCondition(inner)
+      cond.negated = !cond.negated
+      return cond
+    }
+
+    return toCondition(json)
+  }
+
+  // Toujours renvoyer un GroupNode à la racine
+  const root = toNode(verdictJson)
+  if (root.kind === 'group') return root as GroupNode
+  return {
+    id: genId(),
+    kind: 'group',
+    op: 'and',
+    children: [root as ConditionNode],
   }
 }

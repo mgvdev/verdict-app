@@ -4,8 +4,7 @@ import { Navbar } from '~/components/layout/navbar/navbar'
 import { GlobalContextProvider } from '~/contexts'
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
-
-  const [opened, {toggle}] = useDisclosure();
+  const [opened, { toggle }] = useDisclosure()
 
   return (
     <GlobalContextProvider>
@@ -16,21 +15,19 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         navbar={{
           width: 300,
           breakpoint: 'sm',
-          collapsed: { mobile: !opened }
+          collapsed: { mobile: !opened },
         }}
       >
         <AppShell.Header>
-            <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm'/>
+          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         </AppShell.Header>
 
         <AppShell.Navbar zIndex={200}>
-          <Navbar/>
+          <Navbar />
         </AppShell.Navbar>
 
-        <AppShell.Main>
-          {children}
-        </AppShell.Main>
+        <AppShell.Main>{children}</AppShell.Main>
       </AppShell>
     </GlobalContextProvider>
-  );
+  )
 }
