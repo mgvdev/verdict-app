@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Icon2fa,
   IconApi,
@@ -32,19 +32,16 @@ export function Navbar() {
 
   const currentRoute = window.location.pathname
 
-
-  const [active, setActive] = useState(currentRoute);
+  const active = useMemo(() => {
+    return currentRoute
+  }, [currentRoute])
 
   const links = data.map((item) => (
     <Link
       className={classes.link}
-      data-active={active.includes(item.link) || undefined}
+      data-active={active.startsWith(item.link) || undefined}
       href={item.link}
       key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(item.label);
-      }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
