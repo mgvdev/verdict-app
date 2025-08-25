@@ -4,11 +4,13 @@
 import '../css/app.css'
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
+import '@mantine/notifications/styles.css';
 import { createRoot } from 'react-dom/client'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 import { MantineProvider } from '@mantine/core'
 import { NuqsAdapter } from 'nuqs/adapters/react'
+import { Notifications } from '@mantine/notifications'
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 
@@ -24,6 +26,7 @@ createInertiaApp({
   setup({ el, App, props }) {
     createRoot(el).render(
       <MantineProvider>
+        <Notifications />
         <NuqsAdapter>
           <App {...props} />
         </NuqsAdapter>

@@ -6,6 +6,8 @@ import RulesController from '#controllers/rules_controller'
 import { useEffect, useState } from 'react'
 import { useQueryState } from 'nuqs'
 import { Form, useForm } from '@inertiajs/react'
+import { notifications } from '@mantine/notifications';
+
 
 function Show(props: InferPageProps<RulesController, 'show'>) {
   const [rule, setRule] = useState(JSON.parse(props.rule.rule))
@@ -24,7 +26,14 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
 
     // @ts-ignore
     form.setData('rule', rule)
-    form.patch(`/rules/${props.rule.id}`, {preserveUrl: true})
+    form.patch(`/rules/${props.rule.id}`, {preserveUrl: true, onFinish: () => {
+      notifications.show({
+        title: 'Rule saved',
+        message: 'Rule saved successfully',
+        color: 'green',
+      });
+    }
+    })
   }
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Rule from '#models/rule'
 import { createRuleValidator, updateRuleValidator } from '#validators/rule'
+import { dd } from '@adonisjs/core/services/dumper'
 
 export default class RulesController {
   public async index({ inertia, auth, request }: HttpContext) {
@@ -39,25 +40,27 @@ export default class RulesController {
     return inertia.location(`/rules/${rule.id}`)
   }
 
-  public async update({ request, inertia, params, session }: HttpContext) {
+  public async update({ request, inertia, params, session, response }: HttpContext) {
     const body = await request.validateUsing(updateRuleValidator)
 
     const rule = await Rule.findOrFail(params.id)
 
     for (const key of ['name', 'rule', 'description']) {
-      // @ts-ignore
       if (key === 'rule') {
+        // @ts-ignore
         rule[key] = JSON.stringify(body[key]) ?? rule[key]
       } else {
+        // @ts-ignore
         rule[key] = body[key] ?? rule[key]
       }
     }
     await rule.save()
 
-    session.flash({
+    session.flash('flash', {
       message: 'Rule updated successfully',
-      color: 'success',
+      type: 'success',
     })
-    return inertia.location(`/rules/${rule.id}`)
+
+    return response.redirect().back()
   }
 }
