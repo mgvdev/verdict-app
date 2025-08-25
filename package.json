@@ -73,6 +73,7 @@
     "@mantine/hooks": "^8.2.5",
     "@mantine/notifications": "^8.2.7",
     "@mgvdev/verdict": "^0.2.0",
+    "@monaco-editor/react": "^4.7.0-rc.0",
     "@tabler/icons-react": "^3.34.1",
     "@vinejs/vine": "^3.0.1",
     "better-sqlite3": "^12.2.0",

@@ -34,19 +34,20 @@ export default class RulesController {
       name: body.name,
       rule: body.rule,
       description: body.description ?? '',
+      context: JSON.parse(body.context),
       project_id: auth!.user!.currentProject.id,
     })
 
     return inertia.location(`/rules/${rule.id}`)
   }
 
-  public async update({ request, inertia, params, session, response }: HttpContext) {
+  public async update({ request, params, response }: HttpContext) {
     const body = await request.validateUsing(updateRuleValidator)
 
     const rule = await Rule.findOrFail(params.id)
 
-    for (const key of ['name', 'rule', 'description']) {
-      if (key === 'rule') {
+    for (const key of ['name', 'rule', 'description', 'context']) {
+      if (key === 'rule' || key === 'context') {
         // @ts-ignore
         rule[key] = JSON.stringify(body[key]) ?? rule[key]
       } else {
@@ -55,11 +56,6 @@ export default class RulesController {
       }
     }
     await rule.save()
-
-    session.flash('flash', {
-      message: 'Rule updated successfully',
-      type: 'success',
-    })
 
     return response.redirect().back()
   }

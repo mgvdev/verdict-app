@@ -11,6 +11,7 @@ export const createRuleValidator = vine.compile(
      * create a rule with invalid format.
      */
     rule: vine.any(),
+    context: vine.string(),
   })
 )
 

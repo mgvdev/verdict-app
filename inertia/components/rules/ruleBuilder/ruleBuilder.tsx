@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Card, Flex, Group, Kbd, Stack, Tabs, Text, Textarea, Title } from '@mantine/core'
 import { IconCircleCheck, IconCircleX, IconPlayerPlayFilled } from '@tabler/icons-react'
 
@@ -12,6 +12,8 @@ import {
   toVerdict,
 } from '~/components/rules/ruleBuilder/utils'
 import { GroupCard } from '~/components/rules/ruleBuilder/components/groupCard'
+import  Editor  from '@monaco-editor/react'
+import { useQueryState } from 'nuqs'
 
 /**
  * ---------------------------------------------------------------------------
@@ -35,28 +37,18 @@ export default function VerdictStudio({
   initialContext,
   onChange,
   rule,
+  onContextChange,
 }: {
   initialContext?: any
   onChange?: (json: any) => void
-  rule?: any
+  rule?: any,
+  onContextChange?: (json: string) => void
 }) {
   const [contextText, setContextText] = useState<string>(
-    JSON.stringify(
-      initialContext ?? {
-        user: {
-          active: true,
-          age: 25,
-          status: 'active',
-          roles: [
-            { name: 'user', status: 'active' },
-            { name: 'editor', status: 'active' },
-          ],
-        },
-      },
-      null,
-      2
-    )
+    initialContext
   )
+
+  const [tabs, setTabs] = useQueryState('builderTabs', {defaultValue: 'build'})
 
   const contextObj = useMemo(() => safeJsonParse(contextText, {}), [contextText])
   const { fields, arrayItems } = useMemo(() => extractFieldsFromContext(contextObj), [contextObj])
@@ -91,9 +83,13 @@ export default function VerdictStudio({
   }
 
   // expose change
-  React.useEffect(() => {
+  useEffect(() => {
     if (onChange && serialized) onChange(serialized)
   }, [serialized, onChange])
+
+  useEffect(() => {
+    if (onContextChange && contextText) onContextChange(contextText)
+  }, [contextText, onContextChange])
 
   return (
     <Stack p="md" gap="md">
@@ -113,7 +109,7 @@ export default function VerdictStudio({
         </Group>
       </Group>
 
-      <Tabs defaultValue="build" keepMounted={false}>
+      <Tabs defaultValue="build" value={tabs} onChange={(value) => setTabs(value)}  keepMounted={false}>
         <Tabs.List>
           <Tabs.Tab value="context">Context</Tabs.Tab>
           <Tabs.Tab value="build">Build</Tabs.Tab>
@@ -127,31 +123,36 @@ export default function VerdictStudio({
               <Text fw={600} mb="xs">
                 Context JSON
               </Text>
-              <Textarea
-                minRows={12}
-                autosize
-                value={contextText}
-                onChange={(e) => setContextText(e.currentTarget.value)}
+              <Editor
+                height="500px"
+                theme="vs-light"
+               defaultLanguage="json"
+               defaultValue={contextText}
+                onChange={(value) => setContextText(value ?? '')}
+                onMount={(editor) => {
+                  setTimeout(() => {
+                    editor.getAction("editor.action.formatDocument").run();
+                  }, 100)
+                }}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  lineNumbers: 'off',
+                  padding: { top: 10 },
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                  wordWrapColumn: 100,
+                }}
               />
+              {/*<Textarea*/}
+              {/*  minRows={12}*/}
+              {/*  autosize*/}
+              {/*  value={contextText}*/}
+              {/*  onChange={(e) => setContextText(e.currentTarget.value)}*/}
+              {/*/>*/}
               <Text c="dimmed" size="xs" mt="xs">
                 Fields are auto-detected from this JSON.
               </Text>
-            </Card>
-
-            <Card withBorder radius="xs">
-              <Text fw={600} mb="xs">
-                Serialized rule
-              </Text>
-              <Textarea
-                readOnly
-                minRows={10}
-                autosize
-                value={
-                  serialized
-                    ? JSON.stringify(serialized, null, 2)
-                    : '// define at least one condition'
-                }
-              />
             </Card>
           </Stack>
         </Tabs.Panel>

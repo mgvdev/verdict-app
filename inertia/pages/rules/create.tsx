@@ -6,9 +6,11 @@ import { router, useForm } from '@inertiajs/react'
 
 function Create() {
   const [rule, setRule] = useState({})
+  const [context, setContext] = useState({})
 
   const form = useForm({
     rule: {},
+    context: {},
     name: '',
     description: '',
   })
@@ -21,6 +23,10 @@ function Create() {
   useEffect(() => {
     form.setData('rule', rule)
   }, [rule])
+
+  useEffect(() => {
+    form.setData('context', context)
+  }, [context])
 
   return (
     <div>
@@ -46,7 +52,10 @@ function Create() {
           </Group>
         </Group>
       </Card>
-      <VerdictStudio onChange={(value) => setRule(value)} />
+      <VerdictStudio
+        onChange={(value) => setRule(value)}
+        onContextChange={(value) => setContext(value)}
+      />
     </div>
   )
 }

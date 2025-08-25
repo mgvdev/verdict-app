@@ -5,14 +5,13 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
 import { useEffect, useState } from 'react'
 import { useQueryState } from 'nuqs'
-import { Form, useForm } from '@inertiajs/react'
+import {  useForm } from '@inertiajs/react'
 import { notifications } from '@mantine/notifications';
 
 
 function Show(props: InferPageProps<RulesController, 'show'>) {
   const [rule, setRule] = useState(JSON.parse(props.rule.rule))
-  const [name, setName] = useState(props.rule.name)
-  const [description, setDescription] = useState(props.rule.description)
+  const [context, setContext] = useState(props.rule.context)
 
   const [tabs, setTabs] = useQueryState('tabs', {defaultValue: 'stats'})
 
@@ -20,6 +19,7 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
     name: props.rule.name,
     description: props.rule.description,
     rule: rule,
+    context: context
   })
 
   const saveRule = () => {
@@ -39,6 +39,10 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
   useEffect(() => {
     form.setData('rule', rule)
   }, [rule])
+
+  useEffect(() => {
+    form.setData('context', context)
+  }, [context])
 
   return (
     <>
@@ -72,7 +76,12 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
         <Tabs.Panel value="stats">{JSON.stringify(props.rule, null, 2)}</Tabs.Panel>
 
         <Tabs.Panel value="rules">
-          <VerdictStudio rule={rule} onChange={(value) => setRule(value)} />
+          <VerdictStudio
+            rule={rule}
+            initialContext={context}
+            onChange={(value) => setRule(value)}
+            onContextChange={(value) => setContext(value)}
+          />
         </Tabs.Panel>
       </Tabs>
     </>
