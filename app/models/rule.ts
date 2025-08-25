@@ -14,6 +14,15 @@ export default class Rule extends UUIDModel {
   @column()
   declare rule: object
 
+  /**
+   * Context is the data that will be used to evaluate the rule
+   * use only on the builder ui to test the rule
+   *
+   * this column is not used in the rule evaluation
+   */
+  @column()
+  declare context: object
+
   @column()
   declare project_id: string
 
