@@ -1,16 +1,60 @@
 import { AuthLayout } from '~/layouts/authLatout'
-import { Tabs } from '@mantine/core'
+import { Button, Flex, Space, Tabs, TextInput } from '@mantine/core'
 import VerdictStudio from '~/components/rules/ruleBuilder/ruleBuilder'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useQueryState } from 'nuqs'
+import { Form, useForm } from '@inertiajs/react'
 
 function Show(props: InferPageProps<RulesController, 'show'>) {
   const [rule, setRule] = useState(JSON.parse(props.rule.rule))
+  const [name, setName] = useState(props.rule.name)
+  const [description, setDescription] = useState(props.rule.description)
+
+  const [tabs, setTabs] = useQueryState('tabs', {defaultValue: 'stats'})
+
+  const form = useForm({
+    name: props.rule.name,
+    description: props.rule.description,
+    rule: rule,
+  })
+
+  const saveRule = () => {
+
+    // @ts-ignore
+    form.setData('rule', rule)
+    form.patch(`/rules/${props.rule.id}`, {preserveUrl: true})
+  }
+
+  useEffect(() => {
+    form.setData('rule', rule)
+  }, [rule])
 
   return (
     <>
-      <Tabs defaultValue="stats">
+
+        <Flex direction="row" mt={'md'} justify={'start'} gap="md">
+          <TextInput
+            label="Name"
+            placeholder="Enter rule name"
+            value={form.data.name}
+            // @ts-ignore
+            onChange={(e) => form.setData('name', e.target.value)}
+            error={form.errors?.name}
+          />
+          <TextInput
+            label="Description"
+            placeholder="Enter rule description"
+            value={form.data.description}
+            // @ts-ignore
+            onChange={(e) => form.setData('description', e.target.value)}
+            error={form.errors?.description}
+          />
+          <Button onClick={saveRule} style={{marginTop: 'auto'}}>Save</Button>
+        </Flex>
+      <Space mb={'xl'}/>
+      <Tabs defaultValue="stats" value={tabs} onChange={(value) => setTabs(value)}>
         <Tabs.List>
           <Tabs.Tab value="stats">Stats</Tabs.Tab>
           <Tabs.Tab value="rules">Rules</Tabs.Tab>

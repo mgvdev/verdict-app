@@ -39,9 +39,11 @@ router
     router
       .group(() => {
         router.get('/', [RulesController, 'index'])
+        router.post('/', [RulesController, 'store'])
+
         router.get('/create', [RulesController, 'create'])
         router.get('/:id', [RulesController, 'show'])
-        router.post('/', [RulesController, 'store'])
+        router.patch('/:id', [RulesController, 'update'])
       })
       .prefix('/rules')
   })
