@@ -5,11 +5,15 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
 import { useEffect, useState } from 'react'
 import { useQueryState } from 'nuqs'
-import {  useForm } from '@inertiajs/react'
+import { useForm, usePage } from '@inertiajs/react'
 import { notifications } from '@mantine/notifications';
+import { StatsRing } from '~/components/rules/ruleStats/ruleStats'
 
 
 function Show(props: InferPageProps<RulesController, 'show'>) {
+
+
+
   const [rule, setRule] = useState(JSON.parse(props.rule.rule))
   const [context, setContext] = useState(props.rule.context)
 
@@ -73,7 +77,9 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
           <Tabs.Tab value="rules">Rules</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="stats">{JSON.stringify(props.rule, null, 2)}</Tabs.Panel>
+        <Tabs.Panel value="stats" p={'xl'}>
+          <StatsRing/>
+        </Tabs.Panel>
 
         <Tabs.Panel value="rules">
           <VerdictStudio

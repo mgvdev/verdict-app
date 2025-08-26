@@ -3,13 +3,14 @@ import { RulesTable } from '~/components/rules/rulesTable/rulesTable'
 import { Button, Flex, TextInput } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { ReactNode, useEffect } from 'react'
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import { parseAsString, useQueryState } from 'nuqs'
 import { IconSearch } from '@tabler/icons-react'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
 
 function Rules(props: InferPageProps<RulesController, 'index'>) {
+
   const [search, setSearch] = useQueryState('search', parseAsString.withDefault(''))
 
   const [debounced] = useDebouncedValue(search, 300)
