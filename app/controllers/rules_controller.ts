@@ -46,7 +46,7 @@ export default class RulesController {
     const rule = await Rule.findOrFail(params.id)
 
     for (const key of ['name', 'rule', 'description', 'context']) {
-      if (key === 'rule' || key === 'context') {
+      if (key === 'rule') {
         // @ts-ignore
         rule[key] = JSON.stringify(body[key]) ?? rule[key]
       } else {

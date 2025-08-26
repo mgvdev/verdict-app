@@ -19,7 +19,6 @@ export default class InertiaProjectMiddleware {
     } else {
       throw new Error('Current project not found')
     }
-
     return await next()
   }
 }

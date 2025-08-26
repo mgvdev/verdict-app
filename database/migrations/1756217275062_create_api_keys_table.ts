@@ -14,16 +14,18 @@ export default class extends BaseSchema {
       table.foreign('project_id').references('id').inTable('projects')
 
       table.string('name').notNullable()
-      table.string('api_key').notNullable()
+      table.string('key').notNullable()
+      table.string('secret').notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
+      table.timestamp('last_used_at').nullable()
       table.timestamp('deleted_at').nullable()
     })
 
     this.schema.table(this.tableName, (table) => {
       table.unique(['project_id', 'name'])
-      table.index(['api_key'])
+      table.index(['key', 'secret'])
     })
   }
 
