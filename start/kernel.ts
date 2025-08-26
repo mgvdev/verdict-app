@@ -47,6 +47,7 @@ router.use([
 export const middleware = router.named({
   inertia: () => import('@adonisjs/inertia/inertia_middleware'),
   flashMessage: () => import('#middleware/inject_flash_message_to_inertia_response_middleware'),
+  apiLog: () => import('#middleware/api_log_middleware'),
   apiAuth: () => import('#middleware/api_auth_middleware'),
   userOnboarding: () => import('#middleware/user_onboarding_middleware'),
   currentProjectLoader: () => import('#middleware/inertia_project_middleware'),

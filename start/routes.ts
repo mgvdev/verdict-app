@@ -88,7 +88,9 @@ router
       }
     })
 
-    router.post('/rules/:ruleId/evaluate', [RuleChecksController, 'checkRule'])
+    router
+      .post('/rules/:ruleId/evaluate', [RuleChecksController, 'checkRule'])
+      .middleware([middleware.apiLog()])
   })
   .use([middleware.apiAuth()])
   .domain('api.localhost')
