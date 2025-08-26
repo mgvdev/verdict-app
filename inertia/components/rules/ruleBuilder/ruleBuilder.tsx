@@ -47,7 +47,7 @@ export default function VerdictStudio({
   const [contextText, setContextText] = useState<string>(
     initialContext
   )
-
+  
   const [tabs, setTabs] = useQueryState('builderTabs', {defaultValue: 'build'})
 
   const contextObj = useMemo(() => safeJsonParse(contextText, {}), [contextText])

@@ -1,7 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Rule from '#models/rule'
 import { createRuleValidator, updateRuleValidator } from '#validators/rule'
-import { dd } from '@adonisjs/core/services/dumper'
 
 export default class RulesController {
   public async index({ inertia, auth, request }: HttpContext) {
