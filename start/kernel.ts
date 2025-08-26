@@ -47,6 +47,7 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  apiAuth: () => import('#middleware/api_auth_middleware'),
   userOnboarding: () => import('#middleware/user_onboarding_middleware'),
   currentProjectLoader: () => import('#middleware/inertia_project_middleware'),
   guest: () => import('#middleware/guest_middleware'),
