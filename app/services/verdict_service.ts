@@ -18,7 +18,10 @@ export class VerdictService {
   evaluateRule(rule: Rule, context: object): boolean {
     const engine = new Engine()
     const serializer = new RuleSerializer()
-    const deserializedRule = serializer.deserialize(rule.rule as RuleJson)
+
+    const deserializedRule = serializer.deserialize(
+      JSON.parse(rule.rule as string) as unknown as RuleJson
+    )
 
     return engine.evaluate(deserializedRule, context)
   }

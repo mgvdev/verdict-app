@@ -12,7 +12,7 @@ export default class Rule extends UUIDModel {
   declare description: string
 
   @column()
-  declare rule: object
+  declare rule: object | string
 
   /**
    * Context is the data that will be used to evaluate the rule

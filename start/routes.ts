@@ -14,55 +14,81 @@ const OnboardingController = () => import('#controllers/onboardings_controller')
 const RulesController = () => import('#controllers/rules_controller')
 
 import router from '@adonisjs/core/services/router'
+const RuleChecksController = () => import('#controllers/rule_checks_controller')
 const ApiKeysController = () => import('#controllers/api_keys_controller')
 
-router.get('/login', [AuthController, 'showLogin'])
-router.post('/login', [AuthController, 'login'])
-
-router.get('/register', [AuthController, 'showRegister'])
-router.post('/register', [AuthController, 'register'])
-
-router.get('/logout', [AuthController, 'logout'])
-
 /**
- * Authenticated and onboarded routes
+ * Frontend routes
+ * Initialize the middleware for inertia and flash message
+ * Please respect the order of the middleware
  */
 router
   .group(() => {
-    /**
-     * Home route
-     */
-    router.on('/').renderInertia('home')
+    router.get('/login', [AuthController, 'showLogin'])
+    router.post('/login', [AuthController, 'login'])
+
+    router.get('/register', [AuthController, 'showRegister'])
+    router.post('/register', [AuthController, 'register'])
+
+    router.get('/logout', [AuthController, 'logout'])
 
     /**
-     * Rules routes
+     * Authenticated and onboarded routes
      */
     router
       .group(() => {
-        router.get('/', [RulesController, 'index'])
-        router.post('/', [RulesController, 'store'])
+        /**
+         * Home route
+         */
+        router.on('/').renderInertia('home')
 
-        router.get('/create', [RulesController, 'create'])
-        router.get('/:id', [RulesController, 'show'])
-        router.patch('/:id', [RulesController, 'update'])
+        /**
+         * Rules routes
+         */
+        router
+          .group(() => {
+            router.get('/', [RulesController, 'index'])
+            router.post('/', [RulesController, 'store'])
+
+            router.get('/create', [RulesController, 'create'])
+            router.get('/:id', [RulesController, 'show'])
+            router.patch('/:id', [RulesController, 'update'])
+          })
+          .prefix('/rules')
+
+        router
+          .group(() => {
+            router.get('/', [ApiKeysController, 'index'])
+            router.post('/api_key', [ApiKeysController, 'store'])
+          })
+          .prefix('/api_management')
       })
-      .prefix('/rules')
+      .use([middleware.auth(), middleware.userOnboarding(), middleware.currentProjectLoader()])
 
+    /**
+     * Onboarding routes
+     */
     router
       .group(() => {
-        router.get('/', [ApiKeysController, 'index'])
-        router.post('/api_key', [ApiKeysController, 'store'])
+        router.get('/onboarding', [OnboardingController, 'showOnboarding'])
+        router.post('/onboarding', [OnboardingController, 'submitOnboarding'])
       })
-      .prefix('/api_management')
+      .use([middleware.auth()])
   })
-  .use([middleware.auth(), middleware.userOnboarding(), middleware.currentProjectLoader()])
+  .use([middleware.inertia(), middleware.flashMessage()])
 
 /**
- * Onboarding routes
+ * Api route
  */
 router
   .group(() => {
-    router.get('/onboarding', [OnboardingController, 'showOnboarding'])
-    router.post('/onboarding', [OnboardingController, 'submitOnboarding'])
+    router.post('/test', () => {
+      return {
+        message: 'Hello world',
+      }
+    })
+
+    router.post('/rules/:ruleId/evaluate', [RuleChecksController, 'checkRule'])
   })
-  .use([middleware.auth()])
+  .use([middleware.apiAuth()])
+  .domain('api.localhost')

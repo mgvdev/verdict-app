@@ -27,7 +27,6 @@ server.use([
   () => import('@adonisjs/static/static_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
   () => import('@adonisjs/vite/vite_middleware'),
-  () => import('@adonisjs/inertia/inertia_middleware'),
 ])
 
 /**
@@ -39,7 +38,6 @@ router.use([
   () => import('@adonisjs/session/session_middleware'),
   () => import('@adonisjs/shield/shield_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('#middleware/inject_flash_message_to_inertia_response_middleware')
 ])
 
 /**
@@ -47,6 +45,8 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  inertia: () => import('@adonisjs/inertia/inertia_middleware'),
+  flashMessage: () => import('#middleware/inject_flash_message_to_inertia_response_middleware'),
   apiAuth: () => import('#middleware/api_auth_middleware'),
   userOnboarding: () => import('#middleware/user_onboarding_middleware'),
   currentProjectLoader: () => import('#middleware/inertia_project_middleware'),
