@@ -12,7 +12,7 @@ import {
 import { Code, Group } from '@mantine/core'
 import classes from './navbar.module.css'
 import { ProjectSelector } from '~/components/layout/projectSelector/projectSelector'
-import { Link, router } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 
 const data = [
   { link: '/rules', label: 'Rules', icon: IconSitemap },
@@ -30,6 +30,8 @@ const logout = (e: React.MouseEvent<HTMLAnchorElement>) => {
 
 export function Navbar() {
   const currentRoute = window.location.pathname
+
+  const props = usePage().props
 
   const active = useMemo(() => {
     return currentRoute
@@ -52,14 +54,13 @@ export function Navbar() {
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <ProjectSelector />
-          <Code fw={700} className={classes.version}>
-            v3.1.2
-          </Code>
+
         </Group>
         {links}
       </div>
 
       <div className={classes.footer}>
+
         <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
           <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
           <span>Change account</span>
@@ -70,6 +71,10 @@ export function Navbar() {
           <span>Logout</span>
         </a>
       </div>
+
+      <Code fw={700} className={classes.version} ml={'auto'}>
+        { props.app_version as React.ReactNode }
+      </Code>
     </nav>
   )
 }

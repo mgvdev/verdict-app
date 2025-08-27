@@ -5,7 +5,7 @@ import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
 import { useEffect, useState } from 'react'
 import { useQueryState } from 'nuqs'
-import { useForm, usePage } from '@inertiajs/react'
+import { useForm } from '@inertiajs/react'
 import { notifications } from '@mantine/notifications';
 import { StatsRing } from '~/components/rules/ruleStats/ruleStats'
 import Rule from '#models/rule'

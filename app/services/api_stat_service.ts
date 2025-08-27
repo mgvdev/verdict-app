@@ -1,6 +1,5 @@
 import db from '@adonisjs/lucid/services/db'
 import dbConfig from '#config/database'
-import { dd } from '@adonisjs/core/services/dumper'
 
 export type GetRuleStatsResponse = {
   rule_id: string

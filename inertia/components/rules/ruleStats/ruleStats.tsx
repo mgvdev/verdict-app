@@ -38,7 +38,7 @@ export function StatsRing({ruleStats, loading}: statsRingProps) {
 
               <div>
                 <Text c="dimmed" size="xs" tt="uppercase" fw={700}>
-                  Call evaluated to true
+                  Call evaluated to true on last 7 days
                 </Text>
                 <Text fw={700} size="xl">
                   {ruleStats?.true_count} / {ruleStats?.total_count}
