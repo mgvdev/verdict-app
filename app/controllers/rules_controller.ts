@@ -1,8 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Rule from '#models/rule'
 import { createRuleValidator, updateRuleValidator } from '#validators/rule'
+import { ApiStatService } from '#services/api_stat_service'
+import { inject } from '@adonisjs/core'
 
+@inject()
 export default class RulesController {
+  constructor(private readonly apiStatService: ApiStatService) {}
+
   public async index({ inertia, auth, request }: HttpContext) {
     const searchQuery = request.input('search')
 
@@ -19,6 +24,9 @@ export default class RulesController {
     const rule = await Rule.findOrFail(params.id)
     return inertia.render('rules/show', {
       rule,
+      stats: inertia.defer(async () => {
+        return await this.apiStatService.getRuleStats(rule.id)
+      }),
     })
   }
 

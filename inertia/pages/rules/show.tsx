@@ -8,13 +8,17 @@ import { useQueryState } from 'nuqs'
 import { useForm, usePage } from '@inertiajs/react'
 import { notifications } from '@mantine/notifications';
 import { StatsRing } from '~/components/rules/ruleStats/ruleStats'
+import Rule from '#models/rule'
+import { GetRuleStatsResponse } from '#services/api_stat_service'
 
+type pageProps = {
+  rule: Rule
+  stats: GetRuleStatsResponse
+}
 
-function Show(props: InferPageProps<RulesController, 'show'>) {
+function Show(props: pageProps & InferPageProps<RulesController, 'show'>) {
 
-
-
-  const [rule, setRule] = useState(JSON.parse(props.rule.rule))
+  const [rule, setRule] = useState(JSON.parse(props.rule.rule as string))
   const [context, setContext] = useState(props.rule.context)
 
   const [tabs, setTabs] = useQueryState('tabs', {defaultValue: 'stats'})
@@ -78,7 +82,8 @@ function Show(props: InferPageProps<RulesController, 'show'>) {
         </Tabs.List>
 
         <Tabs.Panel value="stats" p={'xl'}>
-          <StatsRing/>
+          { props.stats ? <StatsRing ruleStats={props.stats} loading={false} /> :  <StatsRing loading={true}/> }
+
         </Tabs.Panel>
 
         <Tabs.Panel value="rules">

@@ -1,53 +1,55 @@
-import { IconArrowDownRight, IconArrowUpRight } from '@tabler/icons-react';
-import { Center, Group, Paper, RingProgress, SimpleGrid, Text } from '@mantine/core';
+import {
+  Box,
+  Center,
+  Group,
+  Loader,
+  Paper,
+  RingProgress,
+  SimpleGrid,
+  Text,
+} from '@mantine/core'
+import { GetRuleStatsResponse } from '#services/api_stat_service'
+import { match } from 'ts-pattern'
 
-const icons = {
-  up: IconArrowUpRight,
-  down: IconArrowDownRight,
-};
 
-const data = [
-  { label: 'Page views', stats: '456,578', progress: 65, color: 'teal', icon: 'up' },
-  { label: 'New users', stats: '2,550', progress: 72, color: 'blue', icon: 'up' },
-  {
-    label: 'Orders',
-    stats: '4,735',
-    progress: 52,
-    color: 'red',
-    icon: 'down',
-  },
-] as const;
+type statsRingProps = {
+  ruleStats?: GetRuleStatsResponse,
+  loading: boolean,
+}
 
-export function StatsRing() {
-  const stats = data.map((stat) => {
-    const Icon = icons[stat.icon];
-    return (
-      <Paper withBorder radius="md" p="xs" key={stat.label}>
-        <Group>
-          <RingProgress
-            size={80}
-            roundCaps
-            thickness={8}
-            sections={[{ value: stat.progress, color: stat.color }]}
-            label={
-              <Center>
-                <Icon size={20} stroke={1.5} />
-              </Center>
-            }
-          />
+export function StatsRing({ruleStats, loading}: statsRingProps) {
 
-          <div>
-            <Text c="dimmed" size="xs" tt="uppercase" fw={700}>
-              {stat.label}
-            </Text>
-            <Text fw={700} size="xl">
-              {stat.stats}
-            </Text>
-          </div>
-        </Group>
+  const truePercentage =  ruleStats?.total_count ? (ruleStats.true_count / ruleStats.total_count) * 100 : 0;
+
+  return <Box>
+    <SimpleGrid cols={{ base: 1, sm: 3 }}>
+
+      <Paper withBorder radius="md" p="xs">
+        {
+          match(loading)
+            .with(true, () => <Center><Loader color={'blue'}></Loader></Center>)
+            .with(false, () => <Group>
+              <RingProgress
+                size={80}
+                roundCaps
+                thickness={8}
+                sections={[{ value: truePercentage ?? 0, color: 'blue' }]}
+              />
+
+              <div>
+                <Text c="dimmed" size="xs" tt="uppercase" fw={700}>
+                  Call evaluated to true
+                </Text>
+                <Text fw={700} size="xl">
+                  {ruleStats?.true_count} / {ruleStats?.total_count}
+                </Text>
+              </div>
+            </Group>)
+            .exhaustive()
+        }
+
       </Paper>
-    );
-  });
 
-  return <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>;
+    </SimpleGrid>
+  </Box>
 }
