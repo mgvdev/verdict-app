@@ -14,6 +14,7 @@ const OnboardingController = () => import('#controllers/onboardings_controller')
 const RulesController = () => import('#controllers/rules_controller')
 
 import router from '@adonisjs/core/services/router'
+const ActivitiesController = () => import('#controllers/activities_controller')
 const RuleChecksController = () => import('#controllers/rule_checks_controller')
 const ApiKeysController = () => import('#controllers/api_keys_controller')
 
@@ -57,6 +58,9 @@ router
           })
           .prefix('/rules')
 
+        /**
+         * Api management routes
+         */
         router
           .group(() => {
             router.get('/', [ApiKeysController, 'index'])
@@ -64,6 +68,15 @@ router
             router.delete('/api_key/:id', [ApiKeysController, 'revoke'])
           })
           .prefix('/api_management')
+
+        /**
+         * Activities routes
+         */
+        router
+          .group(() => {
+            router.get('/', [ActivitiesController, 'index'])
+          })
+          .prefix('/activities')
       })
       .use([middleware.auth(), middleware.userOnboarding(), middleware.currentProjectLoader()])
 

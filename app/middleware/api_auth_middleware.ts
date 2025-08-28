@@ -32,6 +32,10 @@ export default class ApiAuthMiddleware {
       return ctx.response.unauthorized({ error: 'Invalid token' })
     }
 
+    if (apiKey.deletedAt) {
+      return ctx.response.unauthorized({ error: 'Revoked token' })
+    }
+
     const isValid = await hash.verify(apiKey.secret, secret)
     if (!isValid) {
       return ctx.response.unauthorized({ error: 'Invalid token' })

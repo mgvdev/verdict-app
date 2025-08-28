@@ -3,6 +3,7 @@ import { belongsTo, column } from '@adonisjs/lucid/orm'
 import UUIDModel from '#models/uuid_model'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import ApiKey from '#models/api_key'
+import Rule from '#models/rule'
 
 export default class ApiLog extends UUIDModel {
   @column()
@@ -14,6 +15,9 @@ export default class ApiLog extends UUIDModel {
   @column()
   declare rule_id: string
 
+  @belongsTo(() => Rule, { foreignKey: 'rule_id' })
+  declare rule: BelongsTo<typeof Rule>
+
   @column()
   declare context: object | string
 
@@ -21,5 +25,5 @@ export default class ApiLog extends UUIDModel {
   declare result: object | string
 
   @column.dateTime()
-  declare evaluated_at: DateTime
+  declare evaluatedAt: DateTime
 }

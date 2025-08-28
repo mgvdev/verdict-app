@@ -17,7 +17,7 @@ import { Link, router, usePage } from '@inertiajs/react'
 const data = [
   { link: '/rules', label: 'Rules', icon: IconSitemap },
   { link: '/api_management', label: 'Api', icon: IconApi },
-  { link: '/activity', label: 'Activity', icon: IconLogs },
+  { link: '/activities', label: 'Activity', icon: IconLogs },
   { link: '/billing', label: 'Billing', icon: IconReceipt2 },
   { link: '/authentication', label: 'Authentication', icon: Icon2fa },
   { link: '/settings', label: 'Other Settings', icon: IconSettings },
