@@ -19,15 +19,16 @@ import {
 import { IconTrash } from '@tabler/icons-react'
 import { ValueInput } from '~/components/rules/ruleBuilder/components/valueInput'
 import { InnerConditionEditor } from '~/components/rules/ruleBuilder/components/innerConditionEditor'
+import { serializedSelfSymbol } from '@mgvdev/verdict'
 
 export function ConditionRow({
-  c,
+  conditionNode,
   onChange,
   fields,
   arrayItems,
   onRemove,
 }: {
-  c: ConditionNode
+  conditionNode: ConditionNode
   onChange: (next: ConditionNode) => void
   fields: FieldInfo[]
   arrayItems: Record<string, FieldInfo[]>
@@ -35,16 +36,21 @@ export function ConditionRow({
 }) {
   const allFields = fields.filter((f) => f.type === 'scalar' || f.type === 'array')
   const isArraySelected = !!allFields.find(
-    (f) => f.type === 'array' && (c.arrayPath ? f.path === c.arrayPath : f.path === c.field)
+    (f) =>
+      f.type === 'array' &&
+      (conditionNode.arrayPath ? f.path === conditionNode.arrayPath : f.path === conditionNode.field)
   )
-  const currentArrayPath = isArraySelected ? (c.arrayPath ?? c.field) : undefined
+  const currentArrayPath = isArraySelected
+    ? conditionNode.arrayPath ?? conditionNode.field
+    : undefined
 
-  const selectedScalar = fields.find((f) => f.type === 'scalar' && f.path === c.field)
+  const selectedScalar = fields.find((f) => f.type === 'scalar' && f.path === conditionNode.field)
+  const selectedArrayInfo = fields.find((f) => f.path === currentArrayPath)
 
   const handleFieldChange = (v?: string) => {
     if (!v) {
       onChange({
-        ...c,
+        ...conditionNode,
         field: undefined,
         arrayPath: undefined,
         operator: undefined,
@@ -53,34 +59,39 @@ export function ConditionRow({
       })
       return
     }
-    const f = fields.find((x) => x.path === v)
-    if (!f) return
-    if (f.type === 'array') {
+    const fieldInfo = fields.find((x) => x.path === v)
+    if (!fieldInfo) return
+    if (fieldInfo.type === 'array') {
+      const isPrimitive = !fieldInfo.item || fieldInfo.item.length === 0
       onChange({
-        ...c,
+        ...conditionNode,
         field: undefined,
         arrayPath: v,
         operator:
-          c.operator === 'any' || c.operator === 'all' || c.operator === 'none'
-            ? c.operator
+          conditionNode.operator === 'any' ||
+          conditionNode.operator === 'all' ||
+          conditionNode.operator === 'none'
+            ? conditionNode.operator
             : 'any',
         value: undefined,
-        inner: c.inner ?? {
+        inner: conditionNode.inner ?? {
           kind: 'condition',
-          field: (arrayItems[v] ?? [])[0]?.path,
+          field: isPrimitive ? serializedSelfSymbol : (arrayItems[v] ?? [])[0]?.path,
           operator: 'eq',
         },
       })
     } else {
       onChange({
-        ...c,
+        ...conditionNode,
         field: v,
         arrayPath: undefined,
         inner: undefined,
         operator:
-          c.operator &&
-          (['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'In', 'notIn'] as any).includes(c.operator)
-            ? c.operator
+          conditionNode.operator &&
+          (['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'In', 'notIn'] as any).includes(
+            conditionNode.operator
+          )
+            ? conditionNode.operator
             : 'eq',
       })
     }
@@ -96,8 +107,8 @@ export function ConditionRow({
       <Group wrap="wrap" align="center" gap="sm">
         <Switch
           size="sm"
-          checked={!!c.negated}
-          onChange={(e) => onChange({ ...c, negated: e.currentTarget.checked })}
+          checked={!!conditionNode.negated}
+          onChange={(e) => onChange({ ...conditionNode, negated: e.currentTarget.checked })}
           onLabel="NOT"
           offLabel="NOT"
         />
@@ -108,7 +119,7 @@ export function ConditionRow({
             searchable
             w={340}
             placeholder="Field path"
-            value={isArraySelected ? currentArrayPath : c.field}
+            value={isArraySelected ? currentArrayPath : conditionNode.field}
             data={allFields.map((f) => ({
               label: `${f.path}${f.type === 'array' ? '  [array]' : ''}`,
               value: f.path,
@@ -124,25 +135,25 @@ export function ConditionRow({
               <Select
                 w={220}
                 placeholder="Operator"
-                value={(c.operator as any) ?? undefined}
+                value={(conditionNode.operator as any) ?? undefined}
                 data={SIMPLE_OPERATOR_OPTIONS}
-                onChange={(v) => onChange({ ...c, operator: (v as any) ?? undefined })}
+                onChange={(v) => onChange({ ...conditionNode, operator: (v as any) ?? undefined })}
               />
             </Group>
 
-            {c.operator && ['In', 'notIn'].includes(c.operator) ? (
+            {conditionNode.operator && ['In', 'notIn'].includes(conditionNode.operator) ? (
               <TagsInput
                 w={340}
                 placeholder="Values (press Enter)"
-                value={Array.isArray(c.value) ? (c.value as any[]).map(String) : []}
-                onChange={(vals) => onChange({ ...c, value: vals })}
+                value={Array.isArray(conditionNode.value) ? (conditionNode.value as any[]).map(String) : []}
+                onChange={(vals) => onChange({ ...conditionNode, value: vals })}
                 clearable
               />
             ) : (
               <ValueInput
                 scalar={selectedScalar?.scalar}
-                value={c.value}
-                onChange={(v) => onChange({ ...c, value: v })}
+                value={conditionNode.value}
+                onChange={(v) => onChange({ ...conditionNode, value: v })}
               />
             )}
           </>
@@ -156,25 +167,26 @@ export function ConditionRow({
                 <Select
                   placeholder="ANY / ALL / NONE"
                   value={
-                    (c.operator as any) === 'any' ||
-                    (c.operator as any) === 'all' ||
-                    (c.operator as any) === 'none'
-                      ? (c.operator as any)
+                    (conditionNode.operator as any) === 'any' ||
+                    (conditionNode.operator as any) === 'all' ||
+                    (conditionNode.operator as any) === 'none'
+                      ? (conditionNode.operator as any)
                       : 'any'
                   }
                   data={ARRAY_OPERATOR_OPTIONS as any}
-                  onChange={(v) => onChange({ ...c, operator: (v as any) ?? 'any' })}
+                  onChange={(v) => onChange({ ...conditionNode, operator: (v as any) ?? 'any' })}
                 />
               </Group>
 
-              <Card withBorder radius="xss" padding="xs" style={{ flex: 1, minWidth: 520 }}>
+              <Card withBorder radius="xs" padding="xs" style={{ flex: 1, minWidth: 520 }}>
                 <Text size="sm" c="dimmed" mb="xs">
                   Inner condition (relative to each item)
                 </Text>
                 <InnerConditionEditor
-                  inner={c.inner ?? ({ kind: 'condition' } as any)}
-                  onChange={(inner) => onChange({ ...c, inner })}
+                  inner={conditionNode.inner ?? ({ kind: 'condition' } as any)}
+                  onChange={(inner) => onChange({ ...conditionNode, inner })}
                   itemFields={arrayItems[currentArrayPath!] ?? []}
+                  primitiveArrayScalarType={selectedArrayInfo?.scalar}
                 />
               </Card>
             </Flex>

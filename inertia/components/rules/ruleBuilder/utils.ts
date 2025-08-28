@@ -5,14 +5,11 @@ import {
   NodeModel,
   ScalarType,
 } from '~/components/rules/ruleBuilder/types'
-import { NumberInput, Select, TextInput } from '@mantine/core'
-import { DateInput } from '@mantine/dates'
-import React from 'react'
 
 // Verdict imports
 import {
-  Engine,
-  RuleSerializer,
+  self,
+  serializedSelfSymbol,
   and,
   or,
   not,
@@ -29,7 +26,6 @@ import {
   none as noneOp,
   RuleJson,
 } from '@mgvdev/verdict'
-import { uid } from '~/components/rules/ruleBuilder/ruleBuilder'
 
 /*
  * Checks if a value is a date-like object.
@@ -145,7 +141,9 @@ export function extractFieldsFromContext(context: any): {
     if (Array.isArray(obj)) {
       const path = base
       let itemFields: FieldInfo[] = []
-      const first = obj.find((x) => x !== null)
+      const first = obj.find((x) => x !== null && x !== undefined)
+      let scalarType: ScalarType | undefined
+
       if (first && typeof first === 'object' && !Array.isArray(first)) {
         /*
          * Array of objects - collects relative fields
@@ -178,12 +176,15 @@ export function extractFieldsFromContext(context: any): {
             })
           }
         })
+      } else if (typeof first !== 'undefined') {
+        scalarType = detectScalarType(first)
       }
       arrayItems[path] = itemFields
       mergeFieldInfo(extractedFields, {
         path,
         type: 'array',
         item: itemFields,
+        scalar: scalarType,
       })
       return
     }
@@ -232,13 +233,15 @@ export function extractFieldsFromContext(context: any): {
  * @param {NodeModel} nodeModel - The node model to process.
  * @return {any} The resulting logical operation object.
  */
-export function toVerdict(nodeModel: NodeModel): any {
+export function toVerdict(nodeModel: NodeModel, fields: FieldInfo[]): any {
   /**
    * Handle group nodes (logical operations like AND/OR).
    */
   if ((nodeModel as GroupNode).kind === 'group') {
     const groupNode = nodeModel as GroupNode
-    const childResults = groupNode.children.map((childNode) => toVerdict(childNode)).filter(Boolean)
+    const childResults = groupNode.children
+      .map((childNode) => toVerdict(childNode, fields))
+      .filter(Boolean)
 
     /**
      * Apply logical AND operation if the group operator is 'and'.
@@ -259,6 +262,8 @@ export function toVerdict(nodeModel: NodeModel): any {
   const conditionNode = nodeModel as ConditionNode
   let operationResult: any = null
 
+  const field = conditionNode.field === serializedSelfSymbol ? self : conditionNode.field
+
   /**
    * Map condition operators to their corresponding functions.
    */
@@ -267,42 +272,42 @@ export function toVerdict(nodeModel: NodeModel): any {
      * Equal to comparison.
      */
     case 'eq':
-      operationResult = eq(conditionNode.field!, conditionNode.value)
+      operationResult = eq(field!, conditionNode.value)
       break
 
     /**
      * Not equal to comparison.
      */
     case 'ne':
-      operationResult = ne(conditionNode.field!, conditionNode.value)
+      operationResult = ne(field!, conditionNode.value)
       break
 
     /**
      * Greater than comparison.
      */
     case 'gt':
-      operationResult = gt(conditionNode.field!, conditionNode.value)
+      operationResult = gt(field!, conditionNode.value)
       break
 
     /**
      * Greater than or equal to comparison.
      */
     case 'gte':
-      operationResult = gte(conditionNode.field!, conditionNode.value)
+      operationResult = gte(field!, conditionNode.value)
       break
 
     /**
      * Less than comparison.
      */
     case 'lt':
-      operationResult = lt(conditionNode.field!, conditionNode.value)
+      operationResult = lt(field!, conditionNode.value)
       break
 
     /**
      * Less than or equal to comparison.
      */
     case 'lte':
-      operationResult = lte(conditionNode.field!, conditionNode.value)
+      operationResult = lte(field!, conditionNode.value)
       break
 
     /**
@@ -310,7 +315,7 @@ export function toVerdict(nodeModel: NodeModel): any {
      */
     case 'In':
       operationResult = In(
-        conditionNode.field!,
+        field!,
         Array.isArray(conditionNode.value) ? conditionNode.value : [conditionNode.value]
       )
       break
@@ -320,7 +325,7 @@ export function toVerdict(nodeModel: NodeModel): any {
      */
     case 'notIn':
       operationResult = notIn(
-        conditionNode.field!,
+        field!,
         Array.isArray(conditionNode.value) ? conditionNode.value : [conditionNode.value]
       )
       break
@@ -338,14 +343,20 @@ export function toVerdict(nodeModel: NodeModel): any {
         id: 'inner',
         kind: 'condition',
       } as ConditionNode
-      const innerOperationResult = toVerdict(innerConditionNode)
+
+      const arrayFieldInfo = fields.find((f) => f.path === conditionNode.arrayPath)
+      const itemFields = arrayFieldInfo?.item ?? []
+      const isPrimitiveArray = !itemFields || itemFields.length === 0
+
+      const innerOperationResult = toVerdict(innerConditionNode, itemFields)
 
       if (!innerOperationResult) {
         operationResult = null
         break
       }
 
-      operationResult = anyOp(conditionNode.arrayPath, innerOperationResult)
+      const arrayPath = isPrimitiveArray ? `${conditionNode.arrayPath}.*` : conditionNode.arrayPath
+      operationResult = anyOp(arrayPath, innerOperationResult)
       break
     }
 
@@ -362,14 +373,18 @@ export function toVerdict(nodeModel: NodeModel): any {
         id: 'inner',
         kind: 'condition',
       } as ConditionNode
-      const innerOperationResult = toVerdict(innerConditionNode)
+      const arrayFieldInfo = fields.find((f) => f.path === conditionNode.arrayPath)
+      const itemFields = arrayFieldInfo?.item ?? []
+      const isPrimitiveArray = !itemFields || itemFields.length === 0
+      const innerOperationResult = toVerdict(innerConditionNode, itemFields)
 
       if (!innerOperationResult) {
         operationResult = null
         break
       }
 
-      operationResult = allOp(conditionNode.arrayPath, innerOperationResult)
+      const arrayPath = isPrimitiveArray ? `${conditionNode.arrayPath}.*` : conditionNode.arrayPath
+      operationResult = allOp(arrayPath, innerOperationResult)
       break
     }
 
@@ -386,14 +401,18 @@ export function toVerdict(nodeModel: NodeModel): any {
         id: 'inner',
         kind: 'condition',
       } as ConditionNode
-      const innerOperationResult = toVerdict(innerConditionNode)
+      const arrayFieldInfo = fields.find((f) => f.path === conditionNode.arrayPath)
+      const itemFields = arrayFieldInfo?.item ?? []
+      const isPrimitiveArray = !itemFields || itemFields.length === 0
+      const innerOperationResult = toVerdict(innerConditionNode, itemFields)
 
       if (!innerOperationResult) {
         operationResult = null
         break
       }
 
-      operationResult = noneOp(conditionNode.arrayPath, innerOperationResult)
+      const arrayPath = isPrimitiveArray ? `${conditionNode.arrayPath}.*` : conditionNode.arrayPath
+      operationResult = noneOp(arrayPath, innerOperationResult)
       break
     }
 
@@ -429,6 +448,7 @@ export function safeJsonParse<T = any>(inputString: string, fallback: T): T {
     return fallback
   }
 }
+
 export function toNodeGroup(verdictJson: RuleJson): GroupNode {
   const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 
@@ -487,6 +507,7 @@ export function toNodeGroup(verdictJson: RuleJson): GroupNode {
       if (innerNegated) innerCond.negated = !innerCond.negated
 
       // On enlève id/kind dans inner (le builder les rajoute côté toVerdict)
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { id: _id, kind: _kind, ...innerNoMeta } = innerCond as any
 
       return {

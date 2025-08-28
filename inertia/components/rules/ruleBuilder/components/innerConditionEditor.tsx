@@ -1,32 +1,43 @@
 import {
   ConditionNode,
   FieldInfo,
+  ScalarType,
   SIMPLE_OPERATOR_OPTIONS,
 } from '~/components/rules/ruleBuilder/types'
-import { Group, Select, TagsInput } from '@mantine/core'
+import { Group, Select, TagsInput, Text } from '@mantine/core'
 import { ValueInput } from '~/components/rules/ruleBuilder/components/valueInput'
 
 export function InnerConditionEditor({
   inner,
   onChange,
   itemFields,
+  primitiveArrayScalarType,
 }: {
   inner: Omit<ConditionNode, 'id' | 'negated'>
   onChange: (c: Omit<ConditionNode, 'id' | 'negated'>) => void
   itemFields: FieldInfo[]
+  primitiveArrayScalarType?: ScalarType
 }) {
+  const isPrimitive = itemFields.length === 0
   const scalarFields = itemFields.filter((f) => f.type === 'scalar')
   const selected = scalarFields.find((f) => f.path === inner.field)
+
   return (
     <Group wrap="wrap" gap="sm">
       <Group>
-        <Select
-          searchable
-          placeholder="item field"
-          data={scalarFields.map((f) => ({ label: f.path, value: f.path }))}
-          value={inner.field}
-          onChange={(v) => onChange({ ...inner, field: v ?? undefined })}
-        />
+        {isPrimitive ? (
+          <Text fw={500} size="sm">
+            Item
+          </Text>
+        ) : (
+          <Select
+            searchable
+            placeholder="item field"
+            data={scalarFields.map((f) => ({ label: f.path, value: f.path }))}
+            value={inner.field}
+            onChange={(v) => onChange({ ...inner, field: v ?? undefined })}
+          />
+        )}
         <Select
           placeholder="op"
           data={SIMPLE_OPERATOR_OPTIONS}
@@ -42,7 +53,7 @@ export function InnerConditionEditor({
           />
         ) : (
           <ValueInput
-            scalar={selected?.scalar}
+            scalar={isPrimitive ? primitiveArrayScalarType : selected?.scalar}
             value={inner.value}
             onChange={(v) => onChange({ ...inner, value: v })}
           />

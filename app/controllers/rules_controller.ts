@@ -3,6 +3,8 @@ import Rule from '#models/rule'
 import { createRuleValidator, updateRuleValidator } from '#validators/rule'
 import { ApiStatService } from '#services/api_stat_service'
 import { inject } from '@adonisjs/core'
+import RulePolicy from '#policies/rule_policy'
+import { NotificationService, NotificationType } from '#services/notification_service'
 
 @inject()
 export default class RulesController {
@@ -65,5 +67,25 @@ export default class RulesController {
     await rule.save()
 
     return response.redirect().back()
+  }
+
+  public async destroy({ params, response, bouncer, session }: HttpContext) {
+    const rule = await Rule.find(params.id)
+
+    if (!rule) {
+      return response.notFound()
+    }
+
+    if (await bouncer.with(RulePolicy).denies('delete', rule)) {
+      return response.forbidden()
+    }
+
+    session.flash(
+      NotificationService.notificationKey,
+      NotificationService.success('Rule deleted successfully', 'Done')
+    )
+
+    await rule.delete()
+    return response.redirect().toRoute('rules.index')
   }
 }

@@ -127,7 +127,7 @@ export function GroupCard({
           ) : (
             <ConditionRow
               key={child.id}
-              c={child as ConditionNode}
+              conditionNode={child as ConditionNode}
               onChange={(cc) => updateChild(child.id, cc)}
               onRemove={() => removeChild(child.id)}
               fields={fields}

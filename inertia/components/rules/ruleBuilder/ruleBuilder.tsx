@@ -47,7 +47,7 @@ export default function VerdictStudio({
   const [contextText, setContextText] = useState<string>(
     initialContext
   )
-  
+
   const [tabs, setTabs] = useQueryState('builderTabs', {defaultValue: 'build'})
 
   const contextObj = useMemo(() => safeJsonParse(contextText, {}), [contextText])
@@ -60,7 +60,7 @@ export default function VerdictStudio({
   const engine = useMemo(() => new Engine(), [])
   const serializer = useMemo(() => new RuleSerializer(), [])
 
-  const verdictObj = useMemo(() => toVerdict(root), [root])
+  const verdictObj = useMemo(() => toVerdict(root, fields), [root, fields])
   const serialized = useMemo(() => {
     try {
       return verdictObj ? serializer.serialize(verdictObj) : null
@@ -75,6 +75,7 @@ export default function VerdictStudio({
   const runTest = () => {
     try {
       const ctx = JSON.parse(testerJson || '{}')
+      console.log({verdictObj, ctx, serialized})
       const res = verdictObj ? engine.evaluate(verdictObj, ctx) : null
       setTestResult(res)
     } catch (e) {
@@ -184,6 +185,12 @@ export default function VerdictStudio({
                   autosize
                   value={testerJson}
                   onChange={(e) => setTesterJson(e.currentTarget.value)}
+                />
+                <Textarea
+                  minRows={16}
+                  autosize
+                  value={JSON.stringify(verdictObj, null, 2)}
+                  readOnly
                 />
                 <Group mt="sm">
                   <Button leftSection={<IconPlayerPlayFilled size={16} />} onClick={runTest}>

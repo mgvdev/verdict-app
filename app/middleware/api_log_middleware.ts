@@ -11,13 +11,15 @@ export default class ApiLogMiddleware {
      */
     const output = await next()
 
-    await ApiLog.create({
-      api_key_id: ctx.apiClient?.id,
-      context: ctx.request.body(),
-      result: ctx.response.getBody(),
-      rule_id: ctx.request.param('ruleId'),
-      evaluated_at: triggeredAt,
-    })
+    if (ctx.response.getBody().evaluation_result !== undefined) {
+      await ApiLog.create({
+        api_key_id: ctx.apiClient?.id,
+        context: ctx.request.body(),
+        result: ctx.response.getBody(),
+        rule_id: ctx.request.param('ruleId'),
+        evaluated_at: triggeredAt,
+      })
+    }
 
     return output
   }

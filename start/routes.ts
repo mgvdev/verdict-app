@@ -47,12 +47,13 @@ router
          */
         router
           .group(() => {
-            router.get('/', [RulesController, 'index'])
-            router.post('/', [RulesController, 'store'])
+            router.get('/', [RulesController, 'index']).as('rules.index')
+            router.post('/', [RulesController, 'store']).as('rules.store')
 
             router.get('/create', [RulesController, 'create'])
             router.get('/:id', [RulesController, 'show'])
             router.patch('/:id', [RulesController, 'update'])
+            router.delete('/:id', [RulesController, 'destroy'])
           })
           .prefix('/rules')
 

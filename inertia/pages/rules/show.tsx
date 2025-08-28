@@ -1,11 +1,11 @@
 import { AuthLayout } from '~/layouts/authLatout'
-import { Button, Flex, Space, Tabs, TextInput } from '@mantine/core'
+import { Box, Button, Flex, Paper, Space, Tabs, TextInput, Text, Group } from '@mantine/core'
 import VerdictStudio from '~/components/rules/ruleBuilder/ruleBuilder'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import RulesController from '#controllers/rules_controller'
 import { useEffect, useState } from 'react'
 import { useQueryState } from 'nuqs'
-import { useForm } from '@inertiajs/react'
+import { router, useForm } from '@inertiajs/react'
 import { notifications } from '@mantine/notifications';
 import { StatsRing } from '~/components/rules/ruleStats/ruleStats'
 import Rule from '#models/rule'
@@ -34,7 +34,7 @@ function Show(props: pageProps & InferPageProps<RulesController, 'show'>) {
 
     // @ts-ignore
     form.setData('rule', rule)
-    form.patch(`/rules/${props.rule.id}`, {preserveUrl: true, onFinish: () => {
+    form.patch(`/rules/${props.rule.id}`, {preserveUrl: true, onSuccess: () => {
       notifications.show({
         title: 'Rule saved',
         message: 'Rule saved successfully',
@@ -79,10 +79,11 @@ function Show(props: pageProps & InferPageProps<RulesController, 'show'>) {
         <Tabs.List>
           <Tabs.Tab value="stats">Stats</Tabs.Tab>
           <Tabs.Tab value="rules">Rules</Tabs.Tab>
+          <Tabs.Tab value="configurations">Configurations</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="stats" p={'xl'}>
-          { props.stats ? <StatsRing ruleStats={props.stats} loading={false} /> :  <StatsRing loading={true}/> }
+          { props.stats ? <StatsRing ruleStats={props.stats} loading={false} /> : <StatsRing loading={true}/> }
 
         </Tabs.Panel>
 
@@ -93,6 +94,21 @@ function Show(props: pageProps & InferPageProps<RulesController, 'show'>) {
             onChange={(value) => setRule(value)}
             onContextChange={(value) => setContext(value)}
           />
+        </Tabs.Panel>
+        <Tabs.Panel value="configurations">
+
+          <Box pt={'xl'}>
+             <Paper p={'xl'} shadow={'xs'}>
+                  <Flex justify={'space-between'}>
+                    <Flex direction={'column'}>
+                      <Text size={'lg'}>Delete rule ?</Text>
+                      <Text c={'red'}>This action is permanent</Text>
+                    </Flex>
+                    <Button color={'red'} mt={'md'} onClick={() => router.delete(`/rules/${props.rule.id}`)}>Delete</Button>
+                  </Flex>
+             </Paper>
+          </Box>
+
         </Tabs.Panel>
       </Tabs>
     </>

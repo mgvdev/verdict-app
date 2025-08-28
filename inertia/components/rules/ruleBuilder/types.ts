@@ -5,7 +5,7 @@ export type ScalarType = 'string' | 'number' | 'boolean' | 'date' | 'unknown'
 export interface FieldInfo {
   path: string // e.g. "user.age" or "orders"
   type: 'scalar' | 'array' | 'object'
-  scalar?: ScalarType // when type === 'scalar'
+  scalar?: ScalarType // when type === 'scalar' or for primitive arrays
   item?: FieldInfo[] // when type === 'array' of objects; paths are RELATIVE to item
 }
 
@@ -22,7 +22,7 @@ export type SimpleOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'In' | 
 
 export type ConditionNode = {
   id: string
-  kind: 'condition'
+  kind: 'condition' | 'value'
   negated?: boolean // NOT wrapper
   // Simple operators
   field?: string // left path, e.g. "user.age"
