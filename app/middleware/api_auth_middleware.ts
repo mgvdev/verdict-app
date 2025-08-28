@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import ApiKey from '#models/api_key'
 import hash from '@adonisjs/core/services/hash'
+import { DateTime } from 'luxon'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {
@@ -37,6 +38,9 @@ export default class ApiAuthMiddleware {
     }
 
     ctx.apiClient = apiKey
+
+    apiKey.lastUsedAt = DateTime.now()
+    await apiKey.save()
 
     return await next()
   }

@@ -13,7 +13,16 @@ export default class ApiKeysController {
 
     return inertia.render('apiKeys/index', {
       apiKeys: await ApiKey.query()
-        .select(['id', 'name', 'key', 'created_at', 'deleted_at', 'created_by', 'project_id'])
+        .select([
+          'id',
+          'name',
+          'key',
+          'created_at',
+          'deleted_at',
+          'created_by',
+          'project_id',
+          'last_used_at',
+        ])
         .where('project_id', currentProjectId!)
         .preload('project')
         .preload('createdBy'),
