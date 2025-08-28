@@ -25,6 +25,8 @@ export default class ApiKeysController {
           'last_used_at',
         ])
         .where('project_id', currentProjectId!)
+        .orderBy('deletedAt', 'asc')
+        .orderBy('created_at', 'desc')
         .preload('project')
         .preload('createdBy'),
     })
