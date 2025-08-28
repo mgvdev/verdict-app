@@ -3,6 +3,7 @@ import ApiKey from '#models/api_key'
 import { createApiKeyValidator } from '#validators/api_key'
 import { inject } from '@adonisjs/core'
 import { ApiKeyService } from '#services/api_key_service'
+import { NotificationService } from '#services/notification_service'
 
 @inject()
 export default class ApiKeysController {
@@ -42,6 +43,17 @@ export default class ApiKeysController {
     })
 
     session.flash('apikey', apikey)
+    return response.redirect().back()
+  }
+
+  public async revoke({ params, response, session }: HttpContext) {
+    await this.apiKeyService.revokeApiKey(params.id)
+
+    session.flash(
+      NotificationService.notificationKey,
+      NotificationService.success('API key revoked successfully', 'Done')
+    )
+
     return response.redirect().back()
   }
 }

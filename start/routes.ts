@@ -61,6 +61,7 @@ router
           .group(() => {
             router.get('/', [ApiKeysController, 'index'])
             router.post('/api_key', [ApiKeysController, 'store'])
+            router.delete('/api_key/:id', [ApiKeysController, 'revoke'])
           })
           .prefix('/api_management')
       })
