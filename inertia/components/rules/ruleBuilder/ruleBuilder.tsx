@@ -76,7 +76,7 @@ export default function VerdictStudio({
     try {
       const ctx = JSON.parse(testerJson || '{}')
       console.log({verdictObj, ctx, serialized})
-      const res = verdictObj ? engine.evaluate(verdictObj, ctx) : null
+      const res = verdictObj ? engine.evaluate(serializer.deserialize(serializer.serialize(verdictObj)), ctx) : null
       setTestResult(res)
     } catch (e) {
       setTestResult(null)

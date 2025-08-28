@@ -8,7 +8,6 @@ import {
 
 // Verdict imports
 import {
-  self,
   serializedSelfSymbol,
   and,
   or,
@@ -262,7 +261,7 @@ export function toVerdict(nodeModel: NodeModel, fields: FieldInfo[]): any {
   const conditionNode = nodeModel as ConditionNode
   let operationResult: any = null
 
-  const field = conditionNode.field === serializedSelfSymbol ? self : conditionNode.field
+  const field = conditionNode.field
 
   /**
    * Map condition operators to their corresponding functions.
@@ -483,7 +482,7 @@ export function toNodeGroup(verdictJson: RuleJson): GroupNode {
 
     // Tableaux: any/all/none => args: [arrayPath, innerRule]
     if (op === 'any' || op === 'all' || op === 'none') {
-      const [arrayPath, rawInner] = json.args as [string, RuleJson]
+      const [rawArrayPath, rawInner] = json.args as [string | typeof serializedSelfSymbol, RuleJson]
 
       // Support d'un NOT autour de l'inner
       let innerJson = rawInner
@@ -510,11 +509,16 @@ export function toNodeGroup(verdictJson: RuleJson): GroupNode {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const { id: _id, kind: _kind, ...innerNoMeta } = innerCond as any
 
+      let arrayPath = String(rawArrayPath)
+      if (arrayPath.endsWith('.*')) {
+        arrayPath = arrayPath.slice(0, -2)
+      }
+
       return {
         id: genId(),
         kind: 'condition',
         operator: op as any,
-        arrayPath: String(arrayPath),
+        arrayPath,
         inner: innerNoMeta,
         negated: false,
       }
