@@ -14,6 +14,8 @@ const OnboardingController = () => import('#controllers/onboardings_controller')
 const RulesController = () => import('#controllers/rules_controller')
 
 import router from '@adonisjs/core/services/router'
+const BillingsController = () => import('#controllers/billings_controller')
+const SubscriptionsController = () => import('#controllers/subscriptions_controller')
 const ActivitiesController = () => import('#controllers/activities_controller')
 const RuleChecksController = () => import('#controllers/rule_checks_controller')
 const ApiKeysController = () => import('#controllers/api_keys_controller')
@@ -41,7 +43,7 @@ router
         /**
          * Home route
          */
-        router.on('/').renderInertia('home')
+        router.on('/').renderInertia('home').as('home')
 
         /**
          * Rules routes
@@ -77,6 +79,23 @@ router
             router.get('/', [ActivitiesController, 'index'])
           })
           .prefix('/activities')
+
+        /**
+         * Billing and subscription routes
+         */
+        router
+          .group(() => {
+            router.get('/', [BillingsController, 'index']).as('billing.index')
+
+            router.get('/subscribe', [SubscriptionsController, 'subscribe'])
+            router
+              .get('/new_subscription/checkout_success', [SubscriptionsController, 'success'])
+              .as('billing.checkout_success')
+            router
+              .get('/new_subscription/checkout_cancel', [SubscriptionsController, 'cancel'])
+              .as('billing.checkout_cancel')
+          })
+          .prefix('/billing')
       })
       .use([middleware.auth(), middleware.userOnboarding(), middleware.currentProjectLoader()])
 
@@ -90,7 +109,12 @@ router
       })
       .use([middleware.auth()])
   })
-  .use([middleware.inertia(), middleware.flashMessage()])
+  .use([
+    middleware.bodyParser(),
+    middleware.bouncer(),
+    middleware.inertia(),
+    middleware.flashMessage(),
+  ])
 
 /**
  * Api route
@@ -105,7 +129,7 @@ router
 
     router
       .post('/rules/:ruleId/evaluate', [RuleChecksController, 'checkRule'])
-      .middleware([middleware.apiLog()])
+      .middleware([middleware.apiLog(), middleware.apiLimitCheck()])
   })
-  .use([middleware.apiAuth()])
+  .use([middleware.bodyParser(), middleware.apiAuth()])
   .domain('api.localhost')

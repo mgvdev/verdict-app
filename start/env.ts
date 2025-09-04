@@ -17,6 +17,15 @@ export default await Env.create(new URL('../', import.meta.url), {
   APP_KEY: Env.schema.string(),
   HOST: Env.schema.string({ format: 'host' }),
   LOG_LEVEL: Env.schema.string(),
+  APP_URL: Env.schema.string(),
+
+  /*
+  |--------------------------------------------------------------------------
+  | STRIPE pricing var
+  |--------------------------------------------------------------------------
+  */
+  STRIPE_PREMIUM_MONTHLY: Env.schema.string(),
+  STRIPE_PREMIUM_ANNUALLY: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
@@ -24,4 +33,21 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the Shopkeeper Stripe SDK
+  |----------------------------------------------------------
+  */
+  STRIPE_KEY: Env.schema.string(),
+  STRIPE_SECRET: Env.schema.string(),
+  STRIPE_WEBHOOK_SECRET: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the Shopkeeper package
+  |----------------------------------------------------------
+  */
+  SHOPKEEPER_CURRENCY: Env.schema.string.optional(),
+  SHOPKEEPER_CURRENCY_LOCALE: Env.schema.string.optional(),
 })

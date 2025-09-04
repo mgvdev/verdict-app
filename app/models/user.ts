@@ -5,13 +5,14 @@ import { BaseModel, beforeCreate, belongsTo, column, manyToMany } from '@adonisj
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import Project from '#models/project'
 import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { Billable } from '@foadonis/shopkeeper/mixins'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
 })
 
-export default class User extends compose(BaseModel, AuthFinder) {
+export default class User extends compose(BaseModel, AuthFinder, Billable) {
   @column({ isPrimary: true })
   declare id: string
 

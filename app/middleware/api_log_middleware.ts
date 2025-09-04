@@ -7,7 +7,7 @@ export default class ApiLogMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
     const triggeredAt = DateTime.now()
     /**
-     * Call next method in the pipeline and return its output
+     * Call the next method in the pipeline and return its output
      */
     const output = await next()
 

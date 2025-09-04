@@ -29,6 +29,7 @@ export default defineConfig({
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
     () => import('@adonisjs/bouncer/commands'),
+    () => import('@foadonis/shopkeeper/commands'),
   ],
 
   /*
@@ -58,6 +59,8 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/inertia/inertia_provider'),
     () => import('@adonisjs/bouncer/bouncer_provider'),
+    () => import('@foadonis/shopkeeper/shopkeeper_provider'),
+    () => import('#providers/sqlite_wal_mode_provider')
   ],
 
   /*

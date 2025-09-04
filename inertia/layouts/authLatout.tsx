@@ -12,12 +12,14 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
   /**
    * Notification trigger when a flash message with notification is present
    */
+  // @ts-expect-error
   const {flash} = usePage().props as { notification?: { title: string, message: string, type: string }}
 
   useEffect(() => {
     if (!flash?.notification) return;
 
     notifications.show({
+      position: 'top-right',
       title: flash?.notification?.title ?? 'Notification',
       message: flash?.notification?.message ?? '',
       color: flash?.notification?.type,

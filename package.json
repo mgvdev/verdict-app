@@ -67,6 +67,7 @@
     "@adonisjs/shield": "^8.2.0",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^4.0.0",
+    "@foadonis/shopkeeper": "^0.1.7",
     "@inertiajs/react": "^2.1.2",
     "@mantine/core": "^8.2.5",
     "@mantine/dates": "^8.2.5",

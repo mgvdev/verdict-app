@@ -19,7 +19,10 @@ const shieldConfig = defineConfig({
     enabled: true,
     exceptRoutes: (ctx) => {
       return (
-        (ctx.request.url().startsWith('/api') || ctx.request.host()?.startsWith('api.')) ?? true
+        (ctx.request.url().startsWith('/api') ||
+          ctx.request.host()?.startsWith('api.') ||
+          ctx.request.url().startsWith('/stripe')) ??
+        true
       )
     },
     enableXsrfCookie: true,

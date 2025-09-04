@@ -34,11 +34,9 @@ server.use([
  * requests with a registered route.
  */
 router.use([
-  () => import('@adonisjs/core/bodyparser_middleware'),
   () => import('@adonisjs/session/session_middleware'),
   () => import('@adonisjs/shield/shield_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('#middleware/initialize_bouncer_middleware'),
 ])
 
 /**
@@ -46,6 +44,10 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  apiLimitCheck: () => import('#middleware/api_limit_check_middleware'),
+  bodyParser: () => import('@adonisjs/core/bodyparser_middleware'),
+  bouncer: () => import('#middleware/initialize_bouncer_middleware'),
+
   inertia: () => import('@adonisjs/inertia/inertia_middleware'),
   flashMessage: () => import('#middleware/inject_flash_message_to_inertia_response_middleware'),
   apiLog: () => import('#middleware/api_log_middleware'),
